@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VulnFeed</title>
-  <link rel="alternate" type="application/rss+xml" title="VulnFeed — Security Advisories" href="https://stephen-cox.github.io/vulnfeed/feed.xml">
+  <link rel="alternate" type="application/rss+xml" title="VulnFeed — Security Advisories" href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml">
   <style>
     :root {
       --bg: #ffffff;
@@ -159,841 +159,584 @@
   <h1>VulnFeed</h1>
   <p class="subtitle">Aggregated security advisories from GitHub repositories</p>
 
-  <a class="feed-link" href="https://stephen-cox.github.io/vulnfeed/feed.xml">Subscribe to RSS Feed</a>
-  <p class="meta">Feed URL: <code>https://stephen-cox.github.io/vulnfeed/feed.xml</code></p>
-  <p class="meta">100 advisories, last updated 1 Oct 2026 at 10:42 UTC.</p>
+  <a class="feed-link" href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml">Subscribe to RSS Feed</a>
+  <p class="meta">Feed URL: <code>https://tuxpeople.github.io/forked-vulnfeed/feed.xml</code></p>
+  <p class="meta">70 advisories, last updated 2 Oct 2026 at 07:29 UTC.</p>
 
-  <h2>Latest advisories (100)</h2>
+  <h2>Latest advisories (70)</h2>
   <ul class="advisories">
     <li class="advisory">
       <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">espocrm/espocrm</span>
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/espocrm/espocrm/security/advisories/GHSA-5729-xq64-4h22">IDOR allowing users with access to Import scope to extract data from attachments with known ID</a>
-      <div class="advisory-meta"><span>29 Sep 2026</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">espocrm/espocrm</span>
-      </div>
-      <a class="summary" href="https://github.com/espocrm/espocrm/security/advisories/GHSA-2cr7-9g4f-8723">Address-book search does not check field-level access to emailAddress field</a>
-      <div class="advisory-meta"><span>29 Sep 2026</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">espocrm/espocrm</span>
-      </div>
-      <a class="summary" href="https://github.com/espocrm/espocrm/security/advisories/GHSA-mr36-xx82-qf6h">Note read does not run ACL output filter leaking values of forbidden audited fields</a>
-      <div class="advisory-meta"><span>29 Sep 2026</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-992f-xh8r-jg2f">Unauthenticated update of public UI settings leading to stored cross-site scripting in Rancher</a>
+      <div class="advisory-meta"><span>23 Sep 2026</span><span>CVE-2026-88804</span><span>CVSS 9.4 (CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-q46m-r89w-j74p">Terminal users can manage Terminals policies and other users&#x27; terminals via the terminal proxy</a>
-      <div class="advisory-meta"><span>28 Sep 2026</span><span>CVSS 7.6 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:H/A:L)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-6vpq-mf48-9794">Session Not Revoked Server-Side on Logout in Rancher</a>
+      <div class="advisory-meta"><span>23 Sep 2026</span><span>CVE-2026-88805</span><span>CVSS 7.4 (CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:A/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-gqfh-jxvw-74rp">Other users&#x27; session tokens disclosed via OAuth-mode connections, tool servers and terminals</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 4.2 (CVSS:3.1/AV:N/AC:H/PR:H/UI:R/S:U/C:H/I:N/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-whgc-vpjx-m3qh">Instance-wide stall via automation recurrence rules that evade sub-daily frequency detection</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-wf9m-46cp-c6h6">Viewer session token theft via javascript: URLs in chat message links</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 6.4 (CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:U/C:H/I:H/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-w8j8-jv6j-3m47">Any authenticated user can exhaust server memory via a compressed remote image in a chat message</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-wfvm-w99r-cjgc">Account takeover via principal rebind in Rancher User updates</a>
+      <div class="advisory-meta"><span>28 Aug 2026</span><span>CVE-2026-71403</span><span>CVSS 6.1 (CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:U/C:H/I:H/A:N)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-vpq8-f445-hcq7">Any website can steal a signed-in user&#x27;s session token via the community stats message handler</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 8.1 (CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-92jp-phmj-wv65">Unauthorized ClusterRole overwrite via GlobalRole cr-name annotation</a>
+      <div class="advisory-meta"><span>28 Aug 2026</span><span>CVE-2026-71404</span><span>CVSS 8.7 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:N/I:H/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-qpqv-xwg8-cqpj">Viewer session token theft via a script link in a shared chat&#x27;s citation</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 7.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-jx3w-3pqq-7f3w">Directory structure of inaccessible knowledge bases disclosed via an unscoped directory id</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-hm62-64q2-6gxw">Any authenticated user can reach disabled model provider backends via an explicit backend index</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-gww9-mhgj-pfqh">Any authenticated user can exhaust worker memory via a nested-repetition knowledge-search pattern</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-gfjp-5hc9-852r">Any authenticated user can repeatedly stall a worker via file-search regex on the event loop</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-5hf4-f4mp-g6h4">Cross-cluster Project Secret disclosure via namespace project ID spoofing in Rancher</a>
+      <div class="advisory-meta"><span>28 Aug 2026</span><span>CVE-2026-75033</span><span>CVSS 7.7 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:N/A:N)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-f9xp-mfmq-x6cg">Any authenticated user can steal another user&#x27;s session token via script embedded in a DOCX preview</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 8.7 (CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-j637-8xgr-436x">Cross-replica SAML assertion replay in Rancher HA deployments</a>
+      <div class="advisory-meta"><span>28 Aug 2026</span><span>CVE-2026-75034</span><span>CVSS 7.4 (CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-9wj4-mcm3-ppj6">Stored XSS via user-authored tool-call embeds in the Markdown renderer</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 4.6 (CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:L/I:L/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-9cxp-636w-4997">Knowledge base collaborators keep read and delete access to removed files via stale file metadata</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 5.0 (CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:L)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-6g45-8g27-fh8q">Deactivated users keep terminal command execution via an already open terminal WebSocket</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 6.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-6fjc-5cg3-mgvh">Read-only shared folder members can still add chats to the folder by forking</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-5w58-mwmh-vf2m">Instance-wide stall via recurrence rules with no possible occurrence</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-2rr4-q6pg-m5g3">Revoked users keep signing in via token exchange when roles are only in the ID token</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 5.4 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-2h26-836q-4jh2">Tool source code disclosed to read-only users via the tool export endpoint</a>
-      <div class="advisory-meta"><span>27 Sep 2026</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-h923-rr66-g2w5">Cross-user token disclosure via label-selector bypass in Rancher’s ext Token API</a>
+      <div class="advisory-meta"><span>28 Aug 2026</span><span>CVE-2026-75035</span><span>CVSS 7.1 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge critical">CRITICAL</span>
-        <span class="origin">WordPress/wordpress-develop</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-7hp8-65ch-5whp">Unauthenticated path traversal in page-template resolution leading to conditional RCE</a>
-      <div class="advisory-meta"><span>22 Sep 2026</span><span>CVE-2026-87902</span><span>CVSS 9.2 (CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-v584-7w32-jwpq">Privilege escalation in Rancher&#x27;s local cluster due to cross-cluster impersonation (confused-deputy problem)</a>
+      <div class="advisory-meta"><span>31 Jul 2026</span><span>CVE-2026-44945</span><span>CVSS 9.1 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">espocrm/espocrm</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/espocrm/espocrm/security/advisories/GHSA-pj52-qx2q-4qfp">IDOR allowing user with access to Email Account scope to steal another user&#x27;s stored IMAP password from Email Account with known ID</a>
-      <div class="advisory-meta"><span>21 Sep 2026</span><span>CVSS 7.7 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:N/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-g4f6-44g4-23xm">Rancher Audit-Log Middleware Unauthenticated Memory Exhaustion Denial of Service</a>
+      <div class="advisory-meta"><span>31 Jul 2026</span><span>CVE-2026-59675</span><span>CVSS 7.5 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge medium">MEDIUM</span>
-        <span class="origin">espocrm/espocrm</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/espocrm/espocrm/security/advisories/GHSA-ph8v-hvf5-wgp9">A login that stopped at the second factor is accepted on routes that do not require authentication</a>
-      <div class="advisory-meta"><span>21 Sep 2026</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-23h9-rr79-r3gh">Cluster Existence Oracle via Unauthenticated Import Endpoint</a>
+      <div class="advisory-meta"><span>31 Jul 2026</span><span>CVE-2026-55998</span><span>CVSS 5.3 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge medium">MEDIUM</span>
-        <span class="origin">espocrm/espocrm</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/espocrm/espocrm/security/advisories/GHSA-xfqv-j65r-qqgh">Unauthenticated stored HTML injection via Lead Capture form</a>
-      <div class="advisory-meta"><span>21 Sep 2026</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge low">LOW</span>
-        <span class="origin">WordPress/wordpress-develop</span>
-      </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-rmpv-w5v9-rqh5">HTML API: `set_modifiable_text()` allows breaking out of a comment via abrupt-closing sequences</a>
-      <div class="advisory-meta"><span>18 Sep 2026</span><span>CVSS 1.8 (CVSS:3.1/AV:L/AC:H/PR:H/UI:R/S:U/C:N/I:L/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">WordPress/wordpress-develop</span>
-      </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-76jg-r2qr-v77f">Site Administrator can network-activate an installed Network-only plugin</a>
-      <div class="advisory-meta"><span>18 Sep 2026</span><span>CVSS 5.3 (CVSS:4.0/AV:N/AC:L/AT:P/PR:L/UI:N/VC:N/VI:L/VA:L/SC:L/SI:H/SA:L)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">WordPress/wordpress-develop</span>
-      </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-5qf7-2r5p-ppj8">Specially crafted URLs can automatically install and preview an inactive theme from WordPress.org</a>
-      <div class="advisory-meta"><span>18 Sep 2026</span><span>CVSS 5.3 (CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:N/I:H/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge low">LOW</span>
-        <span class="origin">WordPress/wordpress-develop</span>
-      </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-mgvw-845h-9qgq">A theme that supports custom-header and does not register an admin-preview-callback is vulnerable to stored XSS</a>
-      <div class="advisory-meta"><span>18 Sep 2026</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">WordPress/wordpress-develop</span>
-      </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-xhp5-863h-rhfr">XML-RPC can be used to publish `customize_changeset` posts that bypass checks for `edit_css`</a>
-      <div class="advisory-meta"><span>18 Sep 2026</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">WordPress/wordpress-develop</span>
-      </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-w57f-v787-qhpf">Authenticated Path Traversal in WP REST Templates Controller</a>
-      <div class="advisory-meta"><span>18 Sep 2026</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-9jxv-832x-45q9">Unauthenticated Denial-of-Service via TLS SAN Stuffing in Rancher and cattle-cluster-agent</a>
+      <div class="advisory-meta"><span>31 Jul 2026</span><span>CVE-2026-55996</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">WordPress/wordpress-develop</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-qg7r-fjh2-wvx8">Stored cross-site scripting in `wpautop()` allows an unauthenticated visitor to inject script</a>
-      <div class="advisory-meta"><span>18 Sep 2026</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge low">LOW</span>
-        <span class="origin">WordPress/wordpress-develop</span>
-      </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-f522-h982-63mg">Missing Authorization leads to Draft/Pending Post Slug Disclosure by Contributor+</a>
-      <div class="advisory-meta"><span>18 Sep 2026</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-7r53-jvhg-9jq4">Long-lived Rancher registration token exposed in plaintext</a>
+      <div class="advisory-meta"><span>31 Jul 2026</span><span>CVE-2026-55997</span><span>CVSS 8.8 (CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge medium">MEDIUM</span>
-        <span class="origin">WordPress/wordpress-develop</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-cjfg-q57r-mq45">Missing `read_post` check in `attachment_submitbox_metadata()` leaks a private parent-post title</a>
-      <div class="advisory-meta"><span>18 Sep 2026</span><span>CVSS 5.3 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">WordPress/wordpress-develop</span>
-      </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-33wf-p63q-w25f">Contributor+ Arbitrary Post Overwrite</a>
-      <div class="advisory-meta"><span>18 Sep 2026</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">WordPress/wordpress-develop</span>
-      </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-32m5-wc28-ghrr">Comments, including notes, can be reparented by any authenticated user</a>
-      <div class="advisory-meta"><span>18 Sep 2026</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-wvm9-9g5j-623f">Users denied by the OAuth role policy can still sign in via token exchange</a>
-      <div class="advisory-meta"><span>9 Sep 2026</span><span>CVE-2026-88006</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-c4rp-wgqc-mfhc">Stale PSA ClusterRoleBinding Persists After RoleTemplate Downgrade in Rancher</a>
+      <div class="advisory-meta"><span>29 Jun 2026</span><span>CVE-2026-44947</span><span>CVSS 4.9 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:H/A:N)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-3g9q-v48f-hh9w">Unauthenticated requests can stall the server via uncached OIDC fetches in back-channel logout</a>
-      <div class="advisory-meta"><span>4 Sep 2026</span><span>CVE-2026-87011</span><span>CVSS 7.5 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-v39v-59xw-j98g">Any authenticated user can suppress calendar alerts instance-wide via a non-numeric alert value</a>
-      <div class="advisory-meta"><span>4 Sep 2026</span><span>CVE-2026-87012</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-8r35-5x5r-hv74">Any authenticated user can start a non-terminating request via a folder parent cycle</a>
-      <div class="advisory-meta"><span>4 Sep 2026</span><span>CVE-2026-87013</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-wjwr-xfp9-r66p">Admin demoted through SSO role sync keeps read and write access to all users&#x27; notes</a>
-      <div class="advisory-meta"><span>4 Sep 2026</span><span>CVE-2026-87014</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-p78m-89r6-pgf7">A user&#x27;s session cookies are sent to tool servers configured for bearer authentication</a>
-      <div class="advisory-meta"><span>4 Sep 2026</span><span>CVE-2026-87015</span><span>CVSS 6.8 (CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:H/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-c5jm-xcmq-9j95">SAML Authentication Replay in Rancher</a>
+      <div class="advisory-meta"><span>29 Jun 2026</span><span>CVE-2026-44946</span><span>CVSS 7.4 (CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-wpmr-8h3q-fwj7">Sign-in as another user via wildcard characters in the OAuth subject claim on SQLite</a>
-      <div class="advisory-meta"><span>4 Sep 2026</span><span>CVE-2026-87016</span><span>CVSS 8.1 (CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-pcvc-8vrv-8q6w">Inaccessible knowledge bases are exposed through the built-in knowledge tool on most vector backends</a>
-      <div class="advisory-meta"><span>31 Aug 2026</span><span>CVE-2026-87017</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-fmqh-xp37-5hr8">Channel members can overwrite another member&#x27;s message via the chat completions endpoint</a>
-      <div class="advisory-meta"><span>31 Aug 2026</span><span>CVE-2026-87994</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-vx8h-4prv-g744">Privilege Escalation from Project Owner to Host</a>
+      <div class="advisory-meta"><span>27 May 2026</span><span>CVE-2026-41052</span><span>CVSS 8.4 (CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:C/C:H/I:H/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-jmc6-2wr8-h3wj">Same-origin XSS to account takeover via terminal port-preview iframe hardcoding allow-same-origin</a>
-      <div class="advisory-meta"><span>31 Aug 2026</span><span>CVE-2026-87995</span><span>CVSS 8.7 (CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-4v28-j6q3-5m4r">SSRF into internal services via DNS rebinding in the Playwright web loader</a>
-      <div class="advisory-meta"><span>31 Aug 2026</span><span>CVE-2026-87996</span><span>CVSS 7.7 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:N/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-3pf7-q2g3-wj28">Any authenticated user can inject chats into another user&#x27;s folder via chat completions</a>
-      <div class="advisory-meta"><span>30 Aug 2026</span><span>CVE-2026-87997</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-2724-6cpj-gf3v">Non-admin users can delete admin-owned external knowledge connections via knowledge base deletion</a>
-      <div class="advisory-meta"><span>30 Aug 2026</span><span>CVE-2026-87998</span><span>CVSS 7.1 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:L)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-34r3-9m95-vq73">Any authenticated user can reach the Azure platform channel via server-side web fetch</a>
-      <div class="advisory-meta"><span>30 Aug 2026</span><span>CVE-2026-87999</span><span>CVSS 7.1 (CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:L/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge low">LOW</span>
-        <span class="origin">espocrm/espocrm</span>
-      </div>
-      <a class="summary" href="https://github.com/espocrm/espocrm/security/advisories/GHSA-hpgx-8qg3-5w7v">Field-level security bypass for email address field via meeting&#x27;s attendees endpoint</a>
-      <div class="advisory-meta"><span>29 Aug 2026</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-3cgp-3cqx-j8w2">Any authenticated user can hang the server via message deletion in a cyclic chat tree</a>
-      <div class="advisory-meta"><span>29 Aug 2026</span><span>CVE-2026-88000</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-5x7x-4c3c-qf5w">Server-side fetches reach blocked and internal hosts via unvalidated HTTP redirect targets</a>
-      <div class="advisory-meta"><span>29 Aug 2026</span><span>CVE-2026-88001</span><span>CVSS 5.0 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:N/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-jqhh-cjmq-vmv6">Any authenticated user can hang the server via a cyclic chat message history</a>
-      <div class="advisory-meta"><span>29 Aug 2026</span><span>CVE-2026-88002</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-4qg5-cxx4-g927">Users outside the OAuth domain allowlist can still sign in via token exchange</a>
-      <div class="advisory-meta"><span>29 Aug 2026</span><span>CVE-2026-88005</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">composer/composer</span>
-      </div>
-      <a class="summary" href="https://github.com/composer/composer/security/advisories/GHSA-rvx4-ffvw-m9q3">Composer arbitrary command execution via a malicious package&#x27;s Perforce source URL</a>
-      <div class="advisory-meta"><span>27 Aug 2026</span><span>CVE-2026-84361</span><span>CVSS 7.7 (CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">composer/composer</span>
-      </div>
-      <a class="summary" href="https://github.com/composer/composer/security/advisories/GHSA-96h3-5x6v-m776">Package bin path can escape the package directory, bypassing the GHSA-gjfg-22fp-rrxx fix</a>
-      <div class="advisory-meta"><span>27 Aug 2026</span><span>CVE-2026-59944</span><span>CVSS 6.1 (CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-49h2-vrqp-wwwf">Cross-tenant attachment disclosure via inline images in notification emails</a>
-      <div class="advisory-meta"><span>25 Aug 2026</span><span>CVSS 8.2 (CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-36hv-g4ch-ch33">Disclosure of group-restricted text modules to unauthorized agents</a>
-      <div class="advisory-meta"><span>25 Aug 2026</span><span>CVSS 5.3 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-r4qw-cv8j-3wf6">Improper access control allows agents to read and modify other users&#x27; overview ordering preferences</a>
-      <div class="advisory-meta"><span>25 Aug 2026</span><span>CVSS 5.3 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-g3cf-rfq7-j5cr">Disclosure of external data source credentials to non-admin users via object attribute metadata</a>
-      <div class="advisory-meta"><span>25 Aug 2026</span><span>CVSS 8.3 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:H/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-3ww3-89pm-g9x8">Arbitrary object disclosure via Core Workflow perform endpoint</a>
-      <div class="advisory-meta"><span>25 Aug 2026</span><span>CVSS 7.1 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge low">LOW</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-cq4j-rx79-345g">AI error messages can be turned into clickable links due to incorrect escaping order</a>
-      <div class="advisory-meta"><span>25 Aug 2026</span><span>CVSS 2.0 (CVSS:4.0/AV:N/AC:L/AT:P/PR:L/UI:A/VC:N/VI:N/VA:N/SC:L/SI:L/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-pfh2-5g93-2rg6">SSRF protection bypass via DNS rebinding in hostname safety check</a>
-      <div class="advisory-meta"><span>25 Aug 2026</span><span>CVSS 5.9 (CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:A/VC:H/VI:L/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">RocketChat/Rocket.Chat</span>
-      </div>
-      <a class="summary" href="https://github.com/RocketChat/Rocket.Chat/security/advisories/GHSA-r3v3-v742-55j5">Arbitrary notify-user event injection via stream-notify-room-users forward (incomplete fix of GHSA-27jx)</a>
-      <div class="advisory-meta"><span>20 Aug 2026</span><span>CVSS 5.4 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:L)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">RocketChat/Rocket.Chat</span>
-      </div>
-      <a class="summary" href="https://github.com/RocketChat/Rocket.Chat/security/advisories/GHSA-6x96-99rg-wg67">Blind Server-Side Request Forgery (SSRF) In The downloadPublicImportFile Endpoint</a>
-      <div class="advisory-meta"><span>20 Aug 2026</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge low">LOW</span>
-        <span class="origin">RocketChat/Rocket.Chat</span>
-      </div>
-      <a class="summary" href="https://github.com/RocketChat/Rocket.Chat/security/advisories/GHSA-7c6v-m68v-v73r">sendForgotPasswordEmail Meteor Method Lacks DDP Rate Limit</a>
-      <div class="advisory-meta"><span>20 Aug 2026</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">icinga/icinga2</span>
-      </div>
-      <a class="summary" href="https://github.com/Icinga/icinga2/security/advisories/GHSA-wm63-p2jg-5665">Large memory allocations on JSON-RPC connections may result in denial of service</a>
-      <div class="advisory-meta"><span>18 Aug 2026</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">icinga/icinga2</span>
-      </div>
-      <a class="summary" href="https://github.com/Icinga/icinga2/security/advisories/GHSA-v265-w3gm-99vg">/v1/events filter expressions allow unrestricted access to config objects, ignoring user-specific restrictions</a>
-      <div class="advisory-meta"><span>18 Aug 2026</span><span>CVSS 4.9 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:N/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge low">LOW</span>
-        <span class="origin">espocrm/espocrm</span>
-      </div>
-      <a class="summary" href="https://github.com/espocrm/espocrm/security/advisories/GHSA-xwmh-j8hf-cfqw">SSRF via IPv6 transition address bypass of internal-host validation</a>
-      <div class="advisory-meta"><span>13 Aug 2026</span><span>CVE-2026-88896</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">espocrm/espocrm</span>
-      </div>
-      <a class="summary" href="https://github.com/espocrm/espocrm/security/advisories/GHSA-28w2-h88g-6vgv">Email template renderer leaks restricted record fields in mass email and group email auto-reply </a>
-      <div class="advisory-meta"><span>13 Aug 2026</span><span>CVE-2026-77460</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">espocrm/espocrm</span>
-      </div>
-      <a class="summary" href="https://github.com/espocrm/espocrm/security/advisories/GHSA-24pg-2q7q-m5p6">Access control bypass in Mass Update letting regular user with Mass Update permission read any attachment with known ID</a>
-      <div class="advisory-meta"><span>13 Aug 2026</span><span>CVE-2026-75505</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">WordPress/wordpress-develop</span>
-      </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-8vr3-7mxf-gx8w">Remote code execution vulnerability via malicious file upload by an Author level user or higher</a>
-      <div class="advisory-meta"><span>12 Aug 2026</span><span>CVE-2026-65640</span><span>CVSS 8.8 (CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">WordPress/wordpress-develop</span>
-      </div>
-      <a class="summary" href="https://github.com/WordPress/wordpress-develop/security/advisories/GHSA-52p2-r8wf-jcrf">Pre-auth reflected XSS on login screen with potential to lead to PHP code execution</a>
-      <div class="advisory-meta"><span>6 Aug 2026</span><span>CVE-2026-64638</span><span>CVSS 8.9 (CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:A/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-4x3x-65c5-8hx4">Stored XSS in ticket article rendering in the new Vue-based interface</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-102345</span><span>CVSS 5.1 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:P/VC:L/VI:L/VA:N/SC:L/SI:L/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-m9ff-hjr3-93h4">S/MIME signature verification allows forged sender impersonation</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-84465</span><span>CVSS 7.1 (CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:N/VI:H/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-cxjg-4gmf-5xqc">Stored HTML injection in Knowledge Base video widget enables forced session switching via unescaped iframe attribute</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-84463</span><span>CVSS 6.3 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:P/VC:N/VI:N/VA:N/SC:H/SI:H/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-6vgm-xxp4-p6jv">Missing Authorization in TagsController#list Allows Cross-Object Tag Enumeration</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-84460</span><span>CVSS 5.3 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-jvm2-cr58-4qxp">IDOR in External Data Source rendering exposes ticket, user, group, and organization data</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-84464</span><span>CVSS 7.1 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge high">HIGH</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-gp3x-9xm8-rcj6">AI Agent template sanitizer bypass leads to remote code execution</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-84462</span><span>CVSS 8.6 (CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-6vh5-pfp2-5rmh">Missing rate limiting allows password brute-forcing during two-factor login</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-84461</span><span>CVSS 6.9 (CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge low">LOW</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-x4f3-367g-m93g">Pending upload deletion bypass via legacy attachment endpoint</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-65828</span><span>CVSS 2.3 (CVSS:4.0/AV:N/AC:H/AT:N/PR:L/UI:N/VC:N/VI:L/VA:L/SC:N/SI:N/SA:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-4j6x-2764-m8gh">Over-inclusive team membership expansion in GitHub App authentication provider</a>
+      <div class="advisory-meta"><span>27 May 2026</span><span>CVE-2026-41053</span><span>CVSS 8.8 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge critical">CRITICAL</span>
-        <span class="origin">zammad/zammad</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-86cc-3ggh-mf2m">Account takeover via unverified email matching during SSO auto-link</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-84458</span><span>CVSS 9.1 (CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-mhc6-2gfq-xx62">Command injection through unsanitized YAML parameter in Rancher</a>
+      <div class="advisory-meta"><span>27 May 2026</span><span>CVE-2026-44939</span><span>CVSS 9.6 (CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-5v3h-x4wf-5c35">Arbitrary file access via path traversal in Rancher Extensions</a>
+      <div class="advisory-meta"><span>30 Apr 2026</span><span>CVE-2026-25705</span><span>CVSS 8.4 (CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-mc24-7m59-4q5p">Rancher CLI skips TLS verification on Rancher CLI login command</a>
+      <div class="advisory-meta"><span>29 Jan 2026</span><span>CVE-2025-67601</span><span>CVSS 8.3 (CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge medium">MEDIUM</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-mw39-9qc2-f7mg">Exposure of sensitive information through audit logs</a>
+      <div class="advisory-meta"><span>24 Oct 2025</span><span>CVE-2024-58269</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge medium">MEDIUM</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-j4vr-pcmw-hx59">User retains access to clusters despite Global Role removal</a>
+      <div class="advisory-meta"><span>23 Oct 2025</span><span>CVE-2023-32199</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:U/C:L/I:L/A:L)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-q82v-h4rq-5c86">Update on users can deny the service to the admin</a>
+      <div class="advisory-meta"><span>25 Sep 2025</span><span>CVE-2024-58260</span><span>CVSS 7.6 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:N/I:L/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-v3vj-5868-2ch2">Rancher CLI SAML authentication is vulnerable to phishing attacks</a>
+      <div class="advisory-meta"><span>25 Sep 2025</span><span>CVE-2024-58267</span><span>CVSS 8.0 (CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge medium">MEDIUM</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-mjcp-rj3c-36fr">Sensitive information is sent to external services through Rancher’s `/meta/proxy` endpoint</a>
+      <div class="advisory-meta"><span>25 Sep 2025</span><span>CVE-2025-54468</span><span>CVSS 4.7 (CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:N/A:N)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-4h45-jpvh-6p5j">Unauthenticated Denial of Service</a>
+      <div class="advisory-meta"><span>28 Aug 2025</span><span>CVE-2024-58259</span><span>CVSS 8.2 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-8h6m-wv39-239m">Users who can create Projects can gain access to arbitrary projects</a>
+      <div class="advisory-meta"><span>25 Apr 2025</span><span>CVE-2024-22031</span><span>CVSS 8.5 (CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-8p83-cpfg-fj3g">Restricted Administrator can change Administrator&#x27;s passwords</a>
+      <div class="advisory-meta"><span>31 Mar 2025</span><span>CVE-2025-23391</span><span>CVSS 9.1 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-mq23-vvg7-xfm4">Improper Account Binding Validation in SAML Authentication Enables User Impersonation on First Login</a>
+      <div class="advisory-meta"><span>27 Feb 2025</span><span>CVE-2025-23389</span><span>CVSS 8.4 (CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:L)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-xr9q-h9c7-xw8q">Unauthenticated stack overflow in /v3-public/authproviders API</a>
+      <div class="advisory-meta"><span>27 Feb 2025</span><span>CVE-2025-23388</span><span>CVSS 8.2 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge medium">MEDIUM</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-5qmp-9x47-92q8">SAML-based login via CLI can be denied by unauthenticated users</a>
+      <div class="advisory-meta"><span>27 Feb 2025</span><span>CVE-2025-23387</span><span>CVSS 5.3 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-2v2w-8v8c-wcm9">Stored XSS in Rancher UI</a>
+      <div class="advisory-meta"><span>14 Jan 2025</span><span>CVE-2024-52281</span><span>CVSS 8.9 (CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:L)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge medium">MEDIUM</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-9c5p-35gj-jqp4">Helm Applications may have sensitive values leaked</a>
+      <div class="advisory-meta"><span>19 Nov 2024</span><span>CVE-2024-52282</span><span>CVSS 6.2 (CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:C/C:H/I:N/A:N)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rke2</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rke2/security/advisories/GHSA-x7xj-jvwp-97rv">Privilege escalation in Windows nodes due to Insecure Access Control Lists</a>
+      <div class="advisory-meta"><span>25 Oct 2024</span><span>CVE-2023-32197</span><span>CVSS 9.1 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-xj7w-r753-vj8v">Exposure of vSphere&#x27;s CPI and CSI credentials</a>
+      <div class="advisory-meta"><span>25 Oct 2024</span><span>CVE-2022-45157</span><span>CVSS 9.1 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:L/A:L)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-h99m-6755-rgwc">Rancher Remote Code Execution via Cluster/Node Drivers</a>
+      <div class="advisory-meta"><span>25 Oct 2024</span><span>CVE-2024-22036</span><span>CVSS 9.1 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-h4h5-9833-v2p4">Rancher agents can be hijacked by taking over the Rancher Server URL</a>
+      <div class="advisory-meta"><span>26 Sep 2024</span><span>CVE-2024-22030</span><span>CVSS 8.0 (CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-9ghh-mmcq-8phc">Rancher does not automatically clean up a user deleted or disabled from the configured Authentication Provider</a>
+      <div class="advisory-meta"><span>17 Jun 2024</span><span>CVE-2023-22650</span><span>CVSS 8.8 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge medium">MEDIUM</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-64jq-m7rq-768h">External RoleTemplates can lead to privilege escalation</a>
+      <div class="advisory-meta"><span>17 Jun 2024</span><span>CVE-2023-32196</span><span>CVSS 6.6 (CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge medium">MEDIUM</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-q6c7-56cq-g2wm">RKE1 Encryption Config kept in plain-text within cluster AppliedSpec</a>
+      <div class="advisory-meta"><span>17 Jun 2024</span><span>CVE-2024-22032</span><span>CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-xfj7-qf8w-2gcr">Rancher &#x27;Audit Log&#x27; leaks sensitive information</a>
+      <div class="advisory-meta"><span>8 Feb 2024</span><span>CVE-2023-22649</span><span>CVSS 7.7 (CVSS:3.1/AV:L/AC:L/PR:H/UI:R/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-c85r-fwc7-45vc">Permissions on &#x27;namespaces&#x27; in any API group grants &#x27;edit&#x27; permissions on namespaces in &#x27;core&#x27;</a>
+      <div class="advisory-meta"><span>8 Feb 2024</span><span>CVE-2023-32194</span><span>CVSS 7.2 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rke2</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rke2/security/advisories/GHSA-p45j-vfv5-wprq">RKE2 supervisor port is vulnerable to unauthenticated remote denial-of-service (DoS) attack via TLS SAN stuffing attack</a>
+      <div class="advisory-meta"><span>8 Sep 2023</span><span>CVE-2023-32186</span><span>CVSS 7.5 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-vf6j-6739-78m8">Azure AD permission changes are not reflected on active sessions</a>
+      <div class="advisory-meta"><span>1 Jun 2023</span><span>CVE-2023-22648</span><span>CVSS 8.0 (CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-p976-h52c-26p6">Privilege Escalation via manipulation of Secrets</a>
+      <div class="advisory-meta"><span>1 Jun 2023</span><span>CVE-2023-22647</span><span>CVSS 9.9 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-46v3-ggjg-qq3x">Multiple Cross-Site Scripting (XSS) issues in Rancher UI</a>
+      <div class="advisory-meta"><span>1 Jun 2023</span><span>CVE-2022-43760</span><span>CVSS 8.4 (CVSS:3.1/AV:N/AC:L/PR:H/UI:R/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-8vhc-hwhc-cpj4">Users retain access after moving namespaces into projects they don&#x27;t have access to</a>
+      <div class="advisory-meta"><span>1 Jun 2023</span><span>CVE-2020-10676</span><span>CVSS 8.8 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-6m9f-pj6w-w87g">Rancher Webhook is misconfigured during upgrade process</a>
+      <div class="advisory-meta"><span>24 Apr 2023</span><span>CVE-2023-22651</span><span>CVSS 9.9 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-g25r-gvq3-wrq7">Authenticated user can gain unauthorized shell pod and kubectl access in the local cluster</a>
+      <div class="advisory-meta"><span>25 Jan 2023</span><span>CVE-2022-21953</span><span>CVSS 7.4 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:L/I:L/A:L)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-8c69-r38j-rpfj">Rancher cattle-token is predictable</a>
+      <div class="advisory-meta"><span>25 Jan 2023</span><span>CVE-2022-43755</span><span>CVSS 7.1 (CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:L/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-cq4p-vp5q-4522">Plaintext storage of sensitive data in Rancher API and cluster.management.cattle.io objects</a>
+      <div class="advisory-meta"><span>25 Jan 2023</span><span>CVE-2022-43757</span><span>CVSS 9.9 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-34p5-jp77-fcrc">Command injection in Rancher Git package</a>
+      <div class="advisory-meta"><span>25 Jan 2023</span><span>CVE-2022-43758</span><span>CVSS 7.6 (CVSS:3.1/AV:N/AC:H/PR:H/UI:R/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-7m72-mh5r-6j3r">Privilege escalation in project role template binding (PRTB) and -promoted roles</a>
+      <div class="advisory-meta"><span>25 Jan 2023</span><span>CVE-2022-43759</span><span>CVSS 7.2 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-c45c-39f6-6gw9">Rancher generated tokens not revoked after modifications made to authentication provider</a>
+      <div class="advisory-meta"><span>25 Jan 2023</span><span>CVSS 8.8 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-6x34-89p7-95wg">Downstream cluster privilege escalation through cluster and project role template binding (CRTB/PRTB)</a>
+      <div class="advisory-meta"><span>19 Aug 2022</span><span>CVE-2022-31247</span><span>CVSS 9.1 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-8w87-58w6-hfv8">Failure to properly sanitize credentials in cluster template answers</a>
+      <div class="advisory-meta"><span>19 Aug 2022</span><span>CVE-2021-36783</span><span>CVSS 9.9 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-g7j7-h4q8-8w2f">Plaintext storage and exposure of credentials in Rancher API and cluster.management.cattle.io object</a>
+      <div class="advisory-meta"><span>19 Aug 2022</span><span>CVE-2021-36782</span><span>CVSS 9.9 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge medium">MEDIUM</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-vrph-m5jj-c46c">Weave CNI password is not configured when a cluster is created from an RKE template</a>
+      <div class="advisory-meta"><span>24 May 2022</span><span>CVE-2022-21951</span><span>CVSS 6.8 (CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:N)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-jwvr-vv7p-gpwq">Privilege escalation for users with create/update permissions in Global Roles</a>
+      <div class="advisory-meta"><span>15 Apr 2022</span><span>CVE-2021-36784</span><span>CVSS 7.2 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-4fc7-hc63-7fjg">Exposure of repository credentials to external third-party sources</a>
+      <div class="advisory-meta"><span>15 Apr 2022</span><span>CVE-2021-36778</span><span>CVSS 7.3 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge medium">MEDIUM</span>
+        <span class="origin">rancher/rancher</span>
+      </div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-hx8w-ghh8-r4xf">Write access to the Catalog for any user when restricted-admin role is enabled</a>
+      <div class="advisory-meta"><span>15 Apr 2022</span><span>CVE-2021-4200</span><span>CVSS 5.4 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:L)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge low">LOW</span>
-        <span class="origin">zammad/zammad</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-75j9-hpg4-j9f8">Authenticated agents can read AI summary error messages from inaccessible tickets</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-63204</span><span>CVSS 2.3 (CVSS:4.0/AV:N/AC:L/AT:P/PR:L/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-pp8r-x7pp-5qj5">Channel admins can read unauthorized attachments via signature rich-text body</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-63205</span><span>CVSS 5.1 (CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-qh8m-g5vr-7272">Microsoft Graph error logs expose partially masked OAuth access tokens</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-63208</span><span>CVSS 5.1 (CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:L/VI:N/VA:N/SC:L/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-fpwp-w2p4-hqg7">Remote image tracking bypass via shortened URL scheme</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-63206</span><span>CVSS 5.3 (CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-33p2-cm7w-62g3">HTML sanitizer API path allowlist bypass via interior path traversal in img src/srcset</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-63006</span><span>CVSS 5.3 (CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:N/VI:L/VA:L/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-r95m-ghj7-646x">Stored XSS via unescaped option labels in the object attribute options context UI</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-63216</span><span>CVSS 5.3 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:L/VI:L/VA:L/SC:N/SI:N/SA:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-wm2r-rp98-8pmh">Exposure of SSH credentials in Rancher/Fleet</a>
+      <div class="advisory-meta"><span>15 Apr 2022</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">zammad/zammad</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-32gv-72x5-3983">Missing article authorization in ticket attachment clone endpoint</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-13229</span><span>CVSS 7.1 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-28g7-896h-695v">Failure to delete orphaned role bindings do not revoke project level access from group based authentication</a>
+      <div class="advisory-meta"><span>1 Apr 2022</span><span>CVE-2021-36775</span><span>CVSS 8.0 (CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:U/C:H/I:H/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-r957-vp26-563q">Invalid PGP Detached Signatures Reported as Good Signature on Inbound Mail</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-61855</span><span>CVSS 5.3 (CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:N/VI:L/VA:N/SC:N/SI:N/SA:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">zammad/zammad</span>
-      </div>
-      <a class="summary" href="https://github.com/zammad/zammad/security/advisories/GHSA-48h2-wv8r-fgp9">Sensitive Information Exposure in Integration Administration API</a>
-      <div class="advisory-meta"><span>4 Aug 2026</span><span>CVE-2026-63207</span><span>CVSS 6.9 (CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:N/VA:N/SC:N/SI:N/SA:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-hwm2-4ph6-w6m5">Restricted PodSecurityPolicy does not prevent containers from running as a privileged user</a>
+      <div class="advisory-meta"><span>31 Mar 2022</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-8x5v-cpv7-8jjp">Any authenticated user can reach internal services and cloud metadata via NAT64-encoded URLs</a>
-      <div class="advisory-meta"><span>2 Aug 2026</span><span>CVE-2026-70485</span><span>CVSS 7.1 (CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:L/A:N)</span></div>
-    </li>
-    <li class="advisory">
-      <div class="advisory-head">
-        <span class="badge low">LOW</span>
-        <span class="origin">open-webui/open-webui</span>
-      </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-3vf6-64vr-3g56">Any authenticated user can cancel another user&#x27;s chat generation via the chat delete endpoint</a>
-      <div class="advisory-meta"><span>2 Aug 2026</span><span>CVE-2026-70483</span><span>CVSS 3.1 (CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:L)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-gvh9-xgrq-r8hw">Improper authorization check in Steve API component of Rancher allows privilege escalation</a>
+      <div class="advisory-meta"><span>31 Mar 2022</span><span>CVE-2021-36776</span><span>CVSS 8.8 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge high">HIGH</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="origin">longhorn/longhorn</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-pwxh-7358-jq2x">Stored XSS via unescaped KaTeX render-error fallback in rendered messages</a>
-      <div class="advisory-meta"><span>2 Aug 2026</span><span>CVE-2026-70492</span><span>CVSS 8.7 (CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:N)</span></div>
+      <a class="summary" href="https://github.com/longhorn/longhorn/security/advisories/GHSA-g358-m2wp-mhhx">Host operations allowed in privileged Longhorn managed pods</a>
+      <div class="advisory-meta"><span>17 Dec 2021</span><span>CVE-2021-36779</span><span>CVSS 8.8 (CVSS:3.1/AV:A/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H)</span></div>
+    </li>
+    <li class="advisory">
+      <div class="advisory-head">
+        <span class="badge high">HIGH</span>
+        <span class="origin">longhorn/longhorn</span>
+      </div>
+      <a class="summary" href="https://github.com/longhorn/longhorn/security/advisories/GHSA-27q8-g55w-83p9">Unauthorized data access from replicas through vulnerable instance manager pods</a>
+      <div class="advisory-meta"><span>17 Dec 2021</span><span>CVE-2021-36780</span><span>CVSS 8.8 (CVSS:3.1/AV:A/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
         <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="origin">rancher/rke2</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-6xhv-rxhv-pwm4">Cross-user file content disclosure via request-scoped direct model knowledge metadata</a>
-      <div class="advisory-meta"><span>2 Aug 2026</span><span>CVE-2026-70487</span><span>CVSS 5.3 (CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:N/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rke2/security/advisories/GHSA-hvj9-vfxp-c3cf">RKE2 bootstrap data is encrypted with empty string if user does not supply a token </a>
+      <div class="advisory-meta"><span>23 Jul 2021</span><span>CVE-2021-32001</span><span>CVSS 6.8 (CVSS:3.1/AV:A/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-jxc9-xmc4-gr23">Deletion of directories and file embeddings in other knowledge bases via sync cleanup</a>
-      <div class="advisory-meta"><span>2 Aug 2026</span><span>CVE-2026-70488</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:N)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-pvxj-25m6-7vqr">Privilege escalation vulnerability via malicious &quot;Connection&quot; header</a>
+      <div class="advisory-meta"><span>15 Jul 2021</span><span>CVE-2021-31999</span><span>CVSS 8.8 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="badge critical">CRITICAL</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-5gpj-vj23-vhhv">Unapproved accounts can open terminal sessions via a WebSocket auth path missing the role check</a>
-      <div class="advisory-meta"><span>2 Aug 2026</span><span>CVE-2026-70490</span><span>CVSS 6.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-gqf8-rvrh-g7w6">Cloud credentials can be used through proxy API by users without access</a>
+      <div class="advisory-meta"><span>15 Jul 2021</span><span>CVE-2021-25320</span><span>CVSS 9.9 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H)</span></div>
     </li>
     <li class="advisory">
       <div class="advisory-head">
-        <span class="badge medium">MEDIUM</span>
-        <span class="origin">open-webui/open-webui</span>
+        <span class="badge high">HIGH</span>
+        <span class="origin">rancher/rancher</span>
       </div>
-      <a class="summary" href="https://github.com/open-webui/open-webui/security/advisories/GHSA-g423-grf7-98rv">Users denied the image-generation permission can still generate images via chat completions</a>
-      <div class="advisory-meta"><span>2 Aug 2026</span><span>CVE-2026-70484</span><span>CVSS 4.3 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:L)</span></div>
+      <a class="summary" href="https://github.com/rancher/rancher/security/advisories/GHSA-f9xf-jq4j-vqw4">ApiGroup not properly specified when creating Kubernetes RBAC resources</a>
+      <div class="advisory-meta"><span>15 Jul 2021</span><span>CVE-2021-25318</span><span>CVSS 8.8 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)</span></div>
     </li>
   </ul>
 
   <h2>What is monitored</h2>
   <p>Repository security advisories</p>
   <ul class="targets">
-    <li>argoproj/argo-cd</li>
-    <li>composer/composer</li>
-    <li>espocrm/espocrm</li>
-    <li>icinga/icinga2</li>
-    <li>mautic/mautic</li>
-    <li>open-webui/open-webui</li>
-    <li>RocketChat/Rocket.Chat</li>
-    <li>taigaio/taiga-back</li>
-    <li>taigaio/taiga-events</li>
-    <li>taigaio/taiga-front</li>
-    <li>WordPress/wordpress-develop</li>
-    <li>zammad/zammad</li>
-  </ul>
-  <p>Advisory database, by package</p>
-  <ul class="targets">
-    <li>composer:composer/composer</li>
-    <li>composer:espocrm/espocrm</li>
-    <li>composer:mautic/core</li>
-    <li>pip:open-webui</li>
-    <li>go:github.com/argoproj/argo-cd/v2</li>
+    <li>longhorn/longhorn</li>
+    <li>rancher/rancher</li>
+    <li>rancher/rke2</li>
   </ul>
 
   <footer>
-    <a href="https://github.com/stephen-cox/vulnfeed">View source on GitHub</a>
+    <a href="https://github.com/tuxpeople/forked-vulnfeed">View source on GitHub</a>
   </footer>
 </body>
 </html>
