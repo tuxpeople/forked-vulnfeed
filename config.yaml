@@ -1,6 +1,6 @@
 site:
-  url: https://stephen-cox.github.io/vulnfeed
-  github: https://github.com/stephen-cox/vulnfeed
+  url: https://tuxpeople.github.io/forked-vulnfeed
+  github: https://github.com/tuxpeople/forked-vulnfeed
 
 feed:
   # Most recent advisories to publish. Subscribers re-download the whole
@@ -12,33 +12,24 @@ feed:
 feeds:
   - source: github
     repos:
-      - argoproj/argo-cd
-      - composer/composer
-      - espocrm/espocrm
-      - icinga/icinga2
-      - mautic/mautic
-      - open-webui/open-webui
-      - RocketChat/Rocket.Chat
-      - taigaio/taiga-back
-      - taigaio/taiga-events
-      - taigaio/taiga-front
-      - WordPress/wordpress-develop
-      - zammad/zammad
+      - longhorn/longhorn
+      - rancher/rancher
+      - rancher/rke2
 
   # Advisories filed against these projects' published packages, which the
   # repository endpoint above does not return. Package names could not be
   # confirmed against the live API when this was added — the run logs
   # "No advisories found for <package>; check the package name" for any that
   # are wrong, so check the first run's output and correct or remove them.
-  - source: ghsa
-    packages:
-      - ecosystem: composer
-        name: composer/composer
-      - ecosystem: composer
-        name: espocrm/espocrm
-      - ecosystem: composer
-        name: mautic/core
-      - ecosystem: pip
-        name: open-webui
-      - ecosystem: go
-        name: github.com/argoproj/argo-cd/v2
+  #- source: ghsa
+  #  packages:
+  #    - ecosystem: composer
+  #      name: composer/composer
+  #    - ecosystem: composer
+  #      name: espocrm/espocrm
+  #    - ecosystem: composer
+  #      name: mautic/core
+  #    - ecosystem: pip
+  #      name: open-webui
+  #    - ecosystem: go
+  #      name: github.com/argoproj/argo-cd/v2
