@@ -12,24 +12,47 @@ feed:
 feeds:
   - source: github
     repos:
-      - longhorn/longhorn
       - rancher/rancher
       - rancher/rke2
+      - rancher/fleet
+      - longhorn/longhorn
+      - longhorn/longhorn-manager
+      - longhorn/longhorn-engine
+      - longhorn/longhorn-instance-manager
+      - containerd/containerd
+      - opencontainers/runc
+      - cilium/cilium
 
   # Advisories filed against these projects' published packages, which the
   # repository endpoint above does not return. Package names could not be
   # confirmed against the live API when this was added — the run logs
   # "No advisories found for <package>; check the package name" for any that
   # are wrong, so check the first run's output and correct or remove them.
-  #- source: ghsa
-  #  packages:
-  #    - ecosystem: composer
-  #      name: composer/composer
-  #    - ecosystem: composer
-  #      name: espocrm/espocrm
-  #    - ecosystem: composer
-  #      name: mautic/core
-  #    - ecosystem: pip
-  #      name: open-webui
-  #    - ecosystem: go
-  #      name: github.com/argoproj/argo-cd/v2
+  - source: ghsa
+    packages:
+      - ecosystem: go
+        name: github.com/rancher/rancher
+      - ecosystem: go
+        name: github.com/k3s-io/k3s
+      - ecosystem: go
+        name: github.com/rancher/fleet
+      - ecosystem: go
+        name: github.com/rancher/local-path-provisioner
+      - ecosystem: go
+        name: github.com/containerd/containerd
+      - ecosystem: go
+        name: github.com/containerd/containerd/v2
+      - ecosystem: go
+        name: github.com/opencontainers/runc
+      - ecosystem: go
+        name: github.com/coredns/coredns
+      - ecosystem: go
+        name: helm.sh/helm/v3
+      - ecosystem: go
+        name: github.com/cert-manager/cert-manager
+      - ecosystem: go
+        name: github.com/neuvector/neuvector
+      - ecosystem: go
+        name: github.com/goharbor/harbor
+      - ecosystem: go
+        name: github.com/cilium/cilium
