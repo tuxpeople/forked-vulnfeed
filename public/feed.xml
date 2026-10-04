@@ -7,7 +7,7 @@
     <atom:link href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml" rel="self"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
-    <lastBuildDate>Sat, 03 Oct 2026 09:45:32 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 04 Oct 2026 10:28:56 +0000</lastBuildDate>
     <item>
       <title>[MEDIUM] go:github.com/containerd/containerd — Containerd has image-pull DoS via crafted OCI index graph amplification (CVE-2026-53493)</title>
       <link>https://github.com/advisories/GHSA-pg57-6jwg-q645</link>
