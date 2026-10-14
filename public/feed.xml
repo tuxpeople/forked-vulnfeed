@@ -7,7 +7,175 @@
     <atom:link href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml" rel="self"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
-    <lastBuildDate>Tue, 13 Oct 2026 11:33:13 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 14 Oct 2026 09:23:11 +0000</lastBuildDate>
+    <item>
+      <title>[MEDIUM] containerd/containerd — containerd: daemon crash when pulling an image with a crafted Content-Length header</title>
+      <link>https://github.com/containerd/containerd/security/advisories/GHSA-8647-2jxj-p2rc</link>
+      <description>CWE-20, CWE-400, CWE-770
+
+Affected:
+- go/github.com/containerd/containerd/v2 &gt;= 2.2.0, &lt; 2.2.10, &gt;= 2.3.0, &lt; 2.3.7, &gt;= 2.4.0, &lt; 2.4.2 (patched: 2.2.10, 2.3.7, 2.4.2)
+
+---
+
+### Impact&#13;
+&#13;
+A bug in containerd's image pull process can cause containerd to crash when downloading layers from an untrusted registry. When parallel layer fetch is enabled, an untrusted registry returning a crafted `Content-Length` header can trigger an unhandled memory allocation panic. This issue only affects configurations where `concurrent_layer_fetch_buffer` is set to enable parallel layer fetch; default configurations with this setting disabled are not affected. A daemon crash interrupts in-flight container operations and blocks new pod startup until containerd is restarted by a service manager, though existing running containers remain unaffected.&#13;
+&#13;
+### Patches&#13;
+&#13;
+This bug has been fixed in containerd 2.4.2, 2.3.7, and 2.2.10. Users should update to these versions to resolve the issue.&#13;
+&#13;
+### Workarounds&#13;
+&#13;
+Ensure `concurrent_layer_fetch_buffer` is set to `0` (the default) or omitted in containerd's configuration under `[plugins."io.containerd.transfer.v1.local"]` and `[plugins."io.containerd.cri.v1.images"]` to disable parallel layer fetch. Restrict pod image references to trusted registries (for example, using a Kubernetes `ValidatingAdmissionPolicy` or admission webhook).&#13;
+&#13;
+### Credits&#13;
+&#13;
+The containerd project would like to thank Opensec Intelligence for responsibly disclosing this issue in accordance with the [containerd security policy](https://github.com/containerd/project/blob/main/SECURITY.md).&#13;
+&#13;
+### For more information&#13;
+&#13;
+If you have any questions or comments about this advisory:&#13;
+&#13;
+* Open an issue in [containerd](https://github.com/containerd/containerd/issues/new/choose)&#13;
+* Email us at [security@containerd.io](mailto:security@containerd.io)&#13;
+&#13;
+To report a security issue in containerd:&#13;
+* [Report a new vulnerability](https://github.com/containerd/containerd/security/advisories/new)&#13;
+* Email us at [security@containerd.io](mailto:security@containerd.io)</description>
+      <guid isPermaLink="false">GHSA-8647-2jxj-p2rc</guid>
+      <category>MEDIUM</category>
+      <category>containerd/containerd</category>
+      <pubDate>Tue, 13 Oct 2026 22:53:58 +0000</pubDate>
+    </item>
+    <item>
+      <title>[MEDIUM] containerd/containerd — containerd: daemon crash when processing an image manifest with a malformed digest (CVE-2026-95839)</title>
+      <link>https://github.com/containerd/containerd/security/advisories/GHSA-vwhp-8p66-mq4f</link>
+      <description>CVE-2026-95839
+
+Affected:
+- go/github.com/containerd/containerd/v2 &gt;= 2.2.0, &lt; 2.2.10, &gt;= 2.3.0, &lt; 2.3.7, &gt;= 2.4.0, &lt; 2.4.2 (patched: 2.2.10, 2.3.7, 2.4.2)
+
+---
+
+### Impact&#13;
+&#13;
+A bug in containerd's image manifest processing causes an unrecovered panic when a child descriptor contains the `io.containerd.manifest.subject` annotation and a malformed digest. Pulling or importing such an image through the transfer service (including default CRI `PullImage` requests) crashes the containerd daemon. In Kubernetes environments, `kubelet` retries failed image pulls with backoff, allowing a pod referencing an untrusted image to repeatedly crash containerd and disrupt container operations on the worker node.&#13;
+&#13;
+### Patches&#13;
+&#13;
+This bug has been fixed in containerd 2.4.2, 2.3.7, and 2.2.10. Users should update to these versions to resolve the issue.&#13;
+&#13;
+### Workarounds&#13;
+&#13;
+Restrict pod image references to trusted registries (for example, using a Kubernetes `ValidatingAdmissionPolicy` or admission webhook) and only pull or import images from trusted sources.&#13;
+&#13;
+### Credits&#13;
+&#13;
+The containerd project would like to thank @melihgurlek, LEI WANG (@ssst0n3) and Haoyuan Zhang (@zj1ng7), and OpenSec Intelligence who independently discovered and responsibly disclosed this issue in accordance with the [containerd security policy](https://github.com/containerd/project/blob/main/SECURITY.md).&#13;
+&#13;
+### For more information&#13;
+&#13;
+If you have any questions or comments about this advisory:&#13;
+&#13;
+* Open an issue in [containerd](https://github.com/containerd/containerd/issues/new/choose)&#13;
+* Email us at [security@containerd.io](mailto:security@containerd.io)&#13;
+&#13;
+To report a security issue in containerd:&#13;
+* [Report a new vulnerability](https://github.com/containerd/containerd/security/advisories/new)&#13;
+* Email us at [security@containerd.io](mailto:security@containerd.io)</description>
+      <guid isPermaLink="false">GHSA-vwhp-8p66-mq4f</guid>
+      <category>MEDIUM</category>
+      <category>containerd/containerd</category>
+      <pubDate>Tue, 13 Oct 2026 22:52:05 +0000</pubDate>
+    </item>
+    <item>
+      <title>[MEDIUM] containerd/containerd — containerd: host disk exhaustion when pulling an image with an unbounded layer stream</title>
+      <link>https://github.com/containerd/containerd/security/advisories/GHSA-hc94-p972-ch66</link>
+      <description>CWE-400
+
+Affected:
+- go/github.com/containerd/containerd/v2 &gt;= 2.0.0, &lt; 2.0.14, &gt;= 2.2.0, &lt; 2.2.10, &gt;= 2.3.0, &lt; 2.3.7, &gt;= 2.4.0, &lt; 2.4.2 (patched: 2.4.2, 2.3.7, 2.2.10, 2.0.14)
+
+---
+
+### Impact&#13;
+&#13;
+A bug in containerd's image pull process can cause containerd to exhaust host disk space when downloading image layers. When pulling an image, containerd streams layer data into its content store without bounding incoming bytes to the declared size before validation. Downloading a crafted image or pulling from a malicious registry can cause containerd to continuously write data to the host filesystem until disk space is exhausted. In Kubernetes, this resource exhaustion can trigger node disk pressure, render the kubelet and containerd unresponsive, and block new pod startup.&#13;
+&#13;
+### Patches&#13;
+&#13;
+This bug has been fixed in containerd 2.4.2, 2.3.7, 2.2.10, and 2.0.14. Users should update to these versions to resolve the issue.&#13;
+&#13;
+### Workarounds&#13;
+&#13;
+Restrict pod image references to trusted registries (for example, using a Kubernetes `ValidatingAdmissionPolicy` or admission webhook).&#13;
+&#13;
+### Credits&#13;
+&#13;
+The containerd project would like to thank Jakub Ciolek of AlphaSense for responsibly disclosing this issue in accordance with the [containerd security policy](https://github.com/containerd/project/blob/main/SECURITY.md).&#13;
+&#13;
+### For more information&#13;
+&#13;
+If you have any questions or comments about this advisory:&#13;
+&#13;
+* Open an issue in [containerd](https://github.com/containerd/containerd/issues/new/choose)&#13;
+* Email us at [security@containerd.io](mailto:security@containerd.io)&#13;
+&#13;
+To report a security issue in containerd:&#13;
+* [Report a new vulnerability](https://github.com/containerd/containerd/security/advisories/new)&#13;
+* Email us at [security@containerd.io](mailto:security@containerd.io)</description>
+      <guid isPermaLink="false">GHSA-hc94-p972-ch66</guid>
+      <category>MEDIUM</category>
+      <category>containerd/containerd</category>
+      <pubDate>Tue, 13 Oct 2026 22:50:43 +0000</pubDate>
+    </item>
+    <item>
+      <title>[MEDIUM] containerd/containerd — containerd CRI plugin: mount and snapshot leak when container checkpoint restore fails</title>
+      <link>https://github.com/containerd/containerd/security/advisories/GHSA-5p7c-hggf-c748</link>
+      <description>CWE-400, CWE-772
+
+Affected:
+- go/github.com/containerd/containerd/v2 &gt;= 2.2.0, &lt; 2.2.10, &gt;= 2.3.0, &lt; 2.3.7 (patched: 2.2.10, 2.3.7)
+
+---
+
+### Impact
+
+A bug in containerd's CRI plugin on Linux can cause containerd to leak read-only mounts and pinned snapshots when restoring a container from a checkpoint image fails. Repeatedly creating containers from a checkpoint image with malformed metadata or a base image that cannot be pulled can exhaust the host mount table and disk space indefinitely. In Kubernetes, this resource exhaustion can prevent containerd and the kubelet from pulling images or starting new pods on the node.
+
+### Patches
+
+This bug has been fixed in containerd 2.3.7 and 2.2.10. Users should update to these versions to resolve the issue. To release resources from mounts leaked prior to the update, administrators must unmount any lingering `/tmp/checkpoint*` mount points on the host (or reboot the node) so containerd can garbage-collect the pinned snapshots.
+
+### Workarounds
+
+containerd 2.4 does not support restore via the CRI plugin and is not vulnerable to this bug.
+
+In containerd 2.3 and 2.2, disable CRI checkpoint and restore support by setting `enable_criu = false` under `[plugins."io.containerd.cri.v1.runtime"]` (or `[plugins."io.containerd.grpc.v1.cri"]` in config version 2) in containerd's configuration, or ensure `enable_experimental_restore_via_create` is set to `false` (the default starting in containerd 2.3.4 and 2.2.7). Restrict pod image references to trusted registries (for example, using a Kubernetes `ValidatingAdmissionPolicy` or admission webhook).
+
+### Credits
+
+The containerd project would like to thank @IamwhatIamSY for responsibly disclosing this issue in accordance with the [containerd security policy](https://github.com/containerd/project/blob/main/SECURITY.md).
+
+### For more information
+
+If you have any questions or comments about this advisory:
+
+* Open an issue in [containerd](https://github.com/containerd/containerd/issues/new/choose)
+* Email us at [security@containerd.io](mailto:security@containerd.io)
+
+To report a security issue in containerd:
+* [Report a new vulnerability](https://github.com/containerd/containerd/security/advisories/new)
+* Email us at [security@containerd.io](mailto:security@containerd.io)
+
+</description>
+      <guid isPermaLink="false">GHSA-5p7c-hggf-c748</guid>
+      <category>MEDIUM</category>
+      <category>containerd/containerd</category>
+      <pubDate>Tue, 13 Oct 2026 22:48:30 +0000</pubDate>
+    </item>
     <item>
       <title>[MEDIUM] go:github.com/containerd/containerd — Containerd has image-pull DoS via crafted OCI index graph amplification (CVE-2026-53493)</title>
       <link>https://github.com/advisories/GHSA-pg57-6jwg-q645</link>
@@ -6303,139 +6471,6 @@ If you have any questions or comments about this advisory:
       <category>MEDIUM</category>
       <category>go:github.com/neuvector/neuvector</category>
       <pubDate>Thu, 28 Aug 2025 13:33:14 +0000</pubDate>
-    </item>
-    <item>
-      <title>[MEDIUM] go:helm.sh/helm/v3 — Helm May Panic Due To Incorrect YAML Content (CVE-2025-55198)</title>
-      <link>https://github.com/advisories/GHSA-f9f8-9pmf-xv68</link>
-      <description>CVE-2025-55198 · CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H) · CWE-908
-
-Affected:
-- go/helm.sh/helm/v3 &lt; 3.18.5 (patched: 3.18.5)
-
----
-
-A Helm contributor discovered an improper validation of type error when parsing Chart.yaml and index.yaml files that can lead to a panic.
-
-### Impact
-
-There are two areas of YAML validation that were impacted. First, when a `Chart.yaml` file had a `null` maintainer or the `child` or `parent` of a dependencies `import-values` could be parsed as something other than a string, `helm lint` would panic. Second, when an `index.yaml` had an empty entry in the list of chart versions Helm would panic on interactions with that repository.
-
-### Patches
-
-This issue has been resolved in Helm v3.18.5.
-
-### Workarounds
-
-Ensure YAML files are formatted as Helm expects prior to processing them with Helm.
-
-### References
-
-Helm's security policy is spelled out in detail in our [SECURITY](https://github.com/helm/community/blob/master/SECURITY.md) document.
-
-### Credits
-
-Disclosed by Jakub Ciolek at AlphaSense.</description>
-      <guid isPermaLink="false">GHSA-f9f8-9pmf-xv68</guid>
-      <category>MEDIUM</category>
-      <category>go:helm.sh/helm/v3</category>
-      <pubDate>Thu, 14 Aug 2025 00:05:27 +0000</pubDate>
-    </item>
-    <item>
-      <title>[MEDIUM] go:helm.sh/helm/v3 — Helm Charts with Specific JSON Schema Values Can Cause Memory Exhaustion (CVE-2025-55199)</title>
-      <link>https://github.com/advisories/GHSA-9h84-qmv7-982p</link>
-      <description>CVE-2025-55199 · CVSS 6.5 (CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H) · CWE-770
-
-Affected:
-- go/helm.sh/helm/v3 &lt; 3.18.5 (patched: 3.18.5)
-
----
-
-A Helm contributor discovered that it was possible to craft a JSON Schema file in a manner which could cause Helm to use all available memory and have an out of memory (OOM) termination.
-
-### Impact
-A malicious chart can point `$ref` in _values.schema.json_ to a device (e.g. `/dev/*`) or other problem file which could cause Helm to use all available memory and have an out of memory (OOM) termination.
-
-### Patches
-This issue has been resolved in Helm v3.18.5.
-
-### Workarounds
-Make sure that all Helm charts that are being loaded into Helm doesn't have any reference of `$ref` pointing to `/dev/zero`.
-
-### References
-Helm's security policy is spelled out in detail in our [SECURITY](https://github.com/helm/community/blob/master/SECURITY.md) document.
-
-### Credits
-Disclosed by Jakub Ciolek at AlphaSense.</description>
-      <guid isPermaLink="false">GHSA-9h84-qmv7-982p</guid>
-      <category>MEDIUM</category>
-      <category>go:helm.sh/helm/v3</category>
-      <pubDate>Thu, 14 Aug 2025 00:01:34 +0000</pubDate>
-    </item>
-    <item>
-      <title>[MEDIUM] go:github.com/goharbor/harbor — Possible ORM Leak Vulnerability in the Harbor (CVE-2025-30086)</title>
-      <link>https://github.com/advisories/GHSA-h27m-3qw8-3pw8</link>
-      <description>CVE-2025-30086 · CVSS 4.9 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:N/A:N) · CWE-200, CWE-202
-
-Affected:
-- go/github.com/goharbor/harbor = 2.13.0 (patched: 2.13.1)
-- go/github.com/goharbor/harbor &gt;= 2.4.0-rc1.1, &lt; 2.12.4 (patched: 2.12.4)
-- go/github.com/goharbor/harbor &lt; 2.4.0-rc1.0.20250331071157-dce7d9f5cffb (patched: 2.4.0-rc1.0.20250331071157-dce7d9f5cffb)
-
----
-
-### Impact
-
-Administrator users on Harbor could exploit an ORM Leak (https://www.elttam.com/blog/plormbing-your-django-orm/) vulnerability that was present in the `/api/v2.0/users` endpoint to leak users' password hash and salt values. This vulnerability was introduced into the application because the `q` URL parameter allowed the administrator to filter users by any column, and the filter `password=~` could be abused to leak out a user's password hash character by character.
-
-An attacker with administrator access could exploit this vulnerability to leak highly sensitive information stored on the Harbor database, as demonstrated in the attached writeup by the leaking of users' password hashes and salts. All endpoints that support the `q` URL parameter are vulnerable to this ORM leak attack, and could potentially be exploitable by lower privileged users to gain unauthorised access to other sensitive information. 
-
-
-### Patches
-No available
-
-### Workarounds
-NA
-
-### References
-
-### Credit
-alex@elttam.com</description>
-      <guid isPermaLink="false">GHSA-h27m-3qw8-3pw8</guid>
-      <category>MEDIUM</category>
-      <category>go:github.com/goharbor/harbor</category>
-      <pubDate>Wed, 23 Jul 2025 15:47:31 +0000</pubDate>
-    </item>
-    <item>
-      <title>[MEDIUM] go:github.com/goharbor/harbor — Harbor repository description page has Cross-site Scripting vulnerability (CVE-2025-32019)</title>
-      <link>https://github.com/advisories/GHSA-f9vc-vf3r-pqqq</link>
-      <description>CVE-2025-32019 · CVSS 4.1 (CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:N/A:N) · CWE-79
-
-Affected:
-- go/github.com/goharbor/harbor &gt;= 2.12.0-rc1, &lt; 2.12.4-rc1 (patched: 2.12.4-rc1)
-- go/github.com/goharbor/harbor &gt;= 2.13.0-rc1, &lt; 2.13.1-rc1 (patched: 2.13.1-rc1)
-- go/github.com/goharbor/harbor &gt;= 2.4.0-rc1.1, &lt;= 2.11.2
-- go/github.com/goharbor/harbor &lt; 2.4.0-rc1.0.20250421072404-a13a16383a41 (patched: 2.4.0-rc1.0.20250421072404-a13a16383a41)
-
----
-
-### Impact
-
-In the Harbor repository information, it is possible to inject code resulting in a stored XSS issue.
-
-### Patches
-Harbor v2.12.3 Harbor 2.11.3
-
-### Workarounds
-No
-
-### References
-
-### Credit
-gleb.razvitie@gmail.com</description>
-      <guid isPermaLink="false">GHSA-f9vc-vf3r-pqqq</guid>
-      <category>MEDIUM</category>
-      <category>go:github.com/goharbor/harbor</category>
-      <pubDate>Wed, 23 Jul 2025 14:40:05 +0000</pubDate>
     </item>
   </channel>
 </rss>
