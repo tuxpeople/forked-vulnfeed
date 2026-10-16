@@ -7,7 +7,101 @@
     <atom:link href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml" rel="self"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
-    <lastBuildDate>Thu, 15 Oct 2026 09:00:58 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 16 Oct 2026 08:52:44 +0000</lastBuildDate>
+    <item>
+      <title>[MEDIUM] go:github.com/containerd/containerd — containerd: Unpack DoS via repeated opaque whiteouts (CVE-2026-95838)</title>
+      <link>https://github.com/advisories/GHSA-rp3h-jf77-q9p4</link>
+      <description>CVE-2026-95838 · CVSS 4.6 (CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:A/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N) · CWE-400, CWE-407
+
+Affected:
+- go/github.com/containerd/containerd/v2 &lt; 2.0.12 (patched: 2.0.12)
+- go/github.com/containerd/containerd &lt; 1.7.35 (patched: 1.7.35)
+- go/github.com/containerd/containerd/v2 &gt;= 2.2.0, &lt; 2.2.8 (patched: 2.2.8)
+- go/github.com/containerd/containerd/v2 &gt;= 2.3.0, &lt; 2.3.5 (patched: 2.3.5)
+
+---
+
+### Impact
+
+A vulnerability exists in containerd's layer unpack handler where the processing of certain image layers causes superlinear time complexity. During the unpack operation, specific file configurations within the layer can trigger repeated directory traversals.
+
+Consequently, pulling or importing a maliciously crafted image can result in increased unpack times and a moderate increase in CPU usage. This delays container startup, even if the compressed image layers are small. Additionally, in orchestrators like Kubernetes that apply concurrency limits to image pulls, these excessively long operations can reduce the available concurrency for other pulls, potentially delaying unrelated container deployments.
+
+### Patches
+
+This bug has been fixed in containerd 2.3.5, 2.2.8, 2.0.12, and 1.7.35. Users should update to these versions to resolve the issue.
+
+### Workarounds
+
+There are no known workarounds for this issue. Users are advised to only pull and import trusted images from known registries until the patch can be applied.
+
+### Credits
+
+The containerd project would like to thank Jakub Ciolek of AlphaSense for responsibly disclosing this issue in accordance with the [containerd security policy](https://github.com/containerd/project/blob/main/SECURITY.md).
+
+### For more information
+
+If you have any questions or comments about this advisory:
+
+* Open an issue in [containerd](https://github.com/containerd/containerd/issues/new/choose)
+* Email us at [security@containerd.io](mailto:security@containerd.io)
+
+To report a security issue in containerd:
+* [Report a new vulnerability](https://github.com/containerd/containerd/security/advisories/new)
+* Email us at [security@containerd.io](mailto:security@containerd.io)</description>
+      <guid isPermaLink="false">GHSA-rp3h-jf77-q9p4</guid>
+      <category>MEDIUM</category>
+      <category>go:github.com/containerd/containerd</category>
+      <pubDate>Thu, 15 Oct 2026 20:22:05 +0000</pubDate>
+    </item>
+    <item>
+      <title>[HIGH] go:github.com/containerd/containerd/v2 — containerd CRI plugin: Checkpoint restore bypasses destination security context (CVE-2026-95837)</title>
+      <link>https://github.com/advisories/GHSA-p7v4-vr35-mj6f</link>
+      <description>CVE-2026-95837 · CVSS 7.8 (CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H) · CWE-269
+
+Affected:
+- go/github.com/containerd/containerd/v2 &gt;= 2.1.0, &lt; 2.2.7 (patched: 2.2.7)
+- go/github.com/containerd/containerd/v2 &gt;= 2.3.0, &lt; 2.3.4 (patched: 2.3.4)
+
+---
+
+### Impact
+
+A vulnerability in containerd's CRI implementation allows a container restored from an untrusted checkpoint via the `CreateContainer` API to bypass the destination security context and execute with elevated privileges. When restoring a container from a checkpoint archive or annotated OCI image, CRIU restores process credentials, Linux capabilities, `no_new_privs`, and seccomp state directly from checkpoint data rather than enforcing the destination CRI `ContainerConfig`. An attacker who can run a container with a crafted checkpoint image can execute processes as root with full capabilities and no enforced seccomp filters despite restrictive security policies requested by the orchestrator. Additionally, containerd's CRI status reporting reflects the requested configuration rather than the actual restored process state, masking the privilege discrepancy from orchestrators. This issue affects Linux systems running containerd with CRI checkpoint restore enabled; users not utilizing CRI checkpoint restore are not affected.
+
+### Patches
+
+This bug has been addressed in containerd 2.2.7 and 2.3.4 by disabling checkpoint restore via `CreateContainer` by default.  The feature has been removed entirely in containerd 2.4.0. Users should update to these versions to resolve the issue. Running containers that were restored from untrusted checkpoints should be stopped, deleted, and recreated.
+
+Users who rely on restore via the `CreateContainer` API can re-enable the feature by setting the new `enable_experimental_restore_via_create` configuration option. However, enabling restore via `CreateContainer` leaves this vulnerability present, as containerd cannot enforce destination security policy during CRIU process restoration. 
+
+### Workarounds
+
+On unpatched versions, containerd does not provide a configuration option to disable checkpoint restore via `CreateContainer`. Deployments should restrict container creation permissions to trusted users, validate container image registries, or use admission controllers to reject images containing checkpoint data.
+
+### References
+
+* [CRIU image security](https://checkpoint-restore.github.io/criu/security/image-security.html)
+
+### Credits
+
+The containerd project would like to thank @l2yyd5 and @berkpolatCE for responsibly disclosing this issue in accordance with the [containerd security policy](https://github.com/containerd/project/blob/main/SECURITY.md).
+
+### For more information
+
+If you have any questions or comments about this advisory:
+
+* Open an issue in [containerd](https://github.com/containerd/containerd/issues/new/choose)
+* Email us at [security@containerd.io](mailto:security@containerd.io)
+
+To report a security issue in containerd:
+* [Report a new vulnerability](https://github.com/containerd/containerd/security/advisories/new)
+* Email us at [security@containerd.io](mailto:security@containerd.io)</description>
+      <guid isPermaLink="false">GHSA-p7v4-vr35-mj6f</guid>
+      <category>HIGH</category>
+      <category>go:github.com/containerd/containerd/v2</category>
+      <pubDate>Thu, 15 Oct 2026 20:21:57 +0000</pubDate>
+    </item>
     <item>
       <title>[MEDIUM] containerd/containerd — containerd: daemon crash when pulling an image with a crafted Content-Length header</title>
       <link>https://github.com/containerd/containerd/security/advisories/GHSA-8647-2jxj-p2rc</link>
@@ -1287,50 +1381,6 @@ To report a security issue in containerd:
       <pubDate>Wed, 09 Sep 2026 18:01:33 +0000</pubDate>
     </item>
     <item>
-      <title>[MEDIUM] containerd/containerd — Unpack DoS via repeated opaque whiteouts (CVE-2026-95838)</title>
-      <link>https://github.com/containerd/containerd/security/advisories/GHSA-rp3h-jf77-q9p4</link>
-      <description>CVE-2026-95838 · CWE-400
-
-Affected:
-- go/github.com/containerd/containerd/v2 &lt; 2.0.12, &gt;= 2.2.0, &lt; 2.2.8, &gt;= 2.3.0, &lt; 2.3.5 (patched: 2.3.5, 2.2.8, 2.0.12)
-- go/github.com/containerd/containerd &lt; 1.7.35 (patched: 1.7.35)
-
----
-
-### Impact&#13;
-&#13;
-A vulnerability exists in containerd's layer unpack handler where the processing of certain image layers causes superlinear time complexity. During the unpack operation, specific file configurations within the layer can trigger repeated directory traversals.&#13;
-&#13;
-Consequently, pulling or importing a maliciously crafted image can result in increased unpack times and a moderate increase in CPU usage. This delays container startup, even if the compressed image layers are small. Additionally, in orchestrators like Kubernetes that apply concurrency limits to image pulls, these excessively long operations can reduce the available concurrency for other pulls, potentially delaying unrelated container deployments.&#13;
-&#13;
-### Patches&#13;
-&#13;
-This bug has been fixed in containerd 2.3.5, 2.2.8, 2.0.12, and 1.7.35. Users should update to these versions to resolve the issue.&#13;
-&#13;
-### Workarounds&#13;
-&#13;
-There are no known workarounds for this issue. Users are advised to only pull and import trusted images from known registries until the patch can be applied.&#13;
-&#13;
-### Credits&#13;
-&#13;
-The containerd project would like to thank Jakub Ciolek of AlphaSense for responsibly disclosing this issue in accordance with the [containerd security policy](https://github.com/containerd/project/blob/main/SECURITY.md).&#13;
-&#13;
-### For more information&#13;
-&#13;
-If you have any questions or comments about this advisory:&#13;
-&#13;
-* Open an issue in [containerd](https://github.com/containerd/containerd/issues/new/choose)&#13;
-* Email us at [security@containerd.io](mailto:security@containerd.io)&#13;
-&#13;
-To report a security issue in containerd:&#13;
-* [Report a new vulnerability](https://github.com/containerd/containerd/security/advisories/new)&#13;
-* Email us at [security@containerd.io](mailto:security@containerd.io)</description>
-      <guid isPermaLink="false">GHSA-rp3h-jf77-q9p4</guid>
-      <category>MEDIUM</category>
-      <category>containerd/containerd</category>
-      <pubDate>Fri, 04 Sep 2026 21:23:07 +0000</pubDate>
-    </item>
-    <item>
       <title>[MEDIUM] go:github.com/cilium/cilium — Cilium may unexpectedly allow ingress traffic from the local namespace when a Kubernetes NetworkPolicy is configured with an ipBlock match (CVE-2026-56743)</title>
       <link>https://github.com/advisories/GHSA-fm8w-2m5w-9j7r</link>
       <description>CVE-2026-56743 · CVSS 5.4 (CVSS:3.1/AV:A/AC:L/PR:L/UI:N/S:C/C:L/I:L/A:N) · CWE-863
@@ -1394,53 +1444,6 @@ If a vulnerability affecting Cilium appears to have been found, the Cilium secur
       <category>MEDIUM</category>
       <category>go:github.com/cilium/cilium</category>
       <pubDate>Thu, 03 Sep 2026 17:17:47 +0000</pubDate>
-    </item>
-    <item>
-      <title>[CRITICAL] containerd/containerd — containerd CRI plugin: Checkpoint restore bypasses destination security context (CVE-2026-95837)</title>
-      <link>https://github.com/containerd/containerd/security/advisories/GHSA-p7v4-vr35-mj6f</link>
-      <description>CVE-2026-95837 · CWE-269
-
-Affected:
-- go/github.com/containerd/containerd/v2 &gt;= 2.1.0 &lt; 2.2.7,  &gt;= 2.3.0 &lt; 2.3.4 (patched: &gt;= 2.2.7, &gt;= 2.3.4)
-
----
-
-### Impact&#13;
-&#13;
-A vulnerability in containerd's CRI implementation allows a container restored from an untrusted checkpoint via the `CreateContainer` API to bypass the destination security context and execute with elevated privileges. When restoring a container from a checkpoint archive or annotated OCI image, CRIU restores process credentials, Linux capabilities, `no_new_privs`, and seccomp state directly from checkpoint data rather than enforcing the destination CRI `ContainerConfig`. An attacker who can run a container with a crafted checkpoint image can execute processes as root with full capabilities and no enforced seccomp filters despite restrictive security policies requested by the orchestrator. Additionally, containerd's CRI status reporting reflects the requested configuration rather than the actual restored process state, masking the privilege discrepancy from orchestrators. This issue affects Linux systems running containerd with CRI checkpoint restore enabled; users not utilizing CRI checkpoint restore are not affected.&#13;
-&#13;
-### Patches&#13;
-&#13;
-This bug has been addressed in containerd 2.2.7 and 2.3.4 by disabling checkpoint restore via `CreateContainer` by default.  The feature has been removed entirely in containerd 2.4.0. Users should update to these versions to resolve the issue. Running containers that were restored from untrusted checkpoints should be stopped, deleted, and recreated.&#13;
-&#13;
-Users who rely on restore via the `CreateContainer` API can re-enable the feature by setting the new `enable_experimental_restore_via_create` configuration option. However, enabling restore via `CreateContainer` leaves this vulnerability present, as containerd cannot enforce destination security policy during CRIU process restoration. &#13;
-&#13;
-### Workarounds&#13;
-&#13;
-On unpatched versions, containerd does not provide a configuration option to disable checkpoint restore via `CreateContainer`. Deployments should restrict container creation permissions to trusted users, validate container image registries, or use admission controllers to reject images containing checkpoint data.&#13;
-&#13;
-### References&#13;
-&#13;
-* [CRIU image security](https://checkpoint-restore.github.io/criu/security/image-security.html)&#13;
-&#13;
-### Credits&#13;
-&#13;
-The containerd project would like to thank @l2yyd5 and @berkpolatCE for responsibly disclosing this issue in accordance with the [containerd security policy](https://github.com/containerd/project/blob/main/SECURITY.md).&#13;
-&#13;
-### For more information&#13;
-&#13;
-If you have any questions or comments about this advisory:&#13;
-&#13;
-* Open an issue in [containerd](https://github.com/containerd/containerd/issues/new/choose)&#13;
-* Email us at [security@containerd.io](mailto:security@containerd.io)&#13;
-&#13;
-To report a security issue in containerd:&#13;
-* [Report a new vulnerability](https://github.com/containerd/containerd/security/advisories/new)&#13;
-* Email us at [security@containerd.io](mailto:security@containerd.io)</description>
-      <guid isPermaLink="false">GHSA-p7v4-vr35-mj6f</guid>
-      <category>CRITICAL</category>
-      <category>containerd/containerd</category>
-      <pubDate>Tue, 01 Sep 2026 20:49:11 +0000</pubDate>
     </item>
     <item>
       <title>[MEDIUM] rancher/fleet — DNS-based information disclosure via Fleet Helm template preprocessing (CVE-2026-75036)</title>
