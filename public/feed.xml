@@ -7,7 +7,267 @@
     <atom:link href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml" rel="self"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
-    <lastBuildDate>Fri, 16 Oct 2026 08:52:44 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 17 Oct 2026 08:23:11 +0000</lastBuildDate>
+    <item>
+      <title>[LOW] go:github.com/coredns/coredns — CoreDNS `k8s_external` headless AXFR can emit an empty transfer batch that panics the `transfer` plugin (CVE-2026-62994)</title>
+      <link>https://github.com/advisories/GHSA-74w3-63xv-x9mv</link>
+      <description>CVE-2026-62994 · CVSS 3.7 (CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L) · CWE-248, CWE-755
+
+Affected:
+- go/github.com/coredns/coredns &gt;= 1.9.4, &lt;= 1.14.4 (patched: 1.14.5)
+
+---
+
+### Summary
+
+A network DNS client allowed to request AXFR for a CoreDNS zone can trigger a panic when CoreDNS is configured with `k8s_external` headless-service zone transfers and Kubernetes contains a headless service endpoint with no declared ports. The built-in `k8s_external` transferer can emit an empty `[]dns.RR` batch, and the shared `transfer` plugin indexes `records[0]` without checking that the batch is non-empty. In normal CoreDNS mode the panic is recovered and returned as `SERVFAIL`, but repeated triggering can disrupt requests and amplify panic logging; if the `debug` plugin disables recovery, the same path can crash the CoreDNS process.
+
+### Details
+
+`plugin/transfer/transfer.go` assumes that every `Transferer` emits only non-empty `[]dns.RR` batches. During AXFR/IXFR response generation it indexes `records[0]` without checking the slice length:
+
+- `plugin/transfer/transfer.go:129-131`
+
+```go
+for records := range pchan {
+    if x, ok := records[0].(*dns.SOA); ok &amp;&amp; soa == nil {
+        soa = x
+    }
+```
+
+The built-in `k8s_external` transferer violates that contract for headless services whose endpoints have no declared ports. `plugin/k8s_external/transfer.go` sends the SRV result slice unconditionally:
+
+- `plugin/k8s_external/transfer.go:104-106`
+
+```go
+recs, _ := e.srv(ctx, svcs, s)
+ch &lt;- recs
+```
+
+`plugin/k8s_external/msg_to_dns.go` intentionally skips services whose port is `-1`:
+
+- `plugin/k8s_external/msg_to_dns.go:107-112`
+
+```go
+for _, s := range services {
+    // Don't add the entry if the port is -1 (invalid). The kubernetes plugin uses port -1 when a service/endpoint
+    // does not have any declared ports.
+    if s.Port == -1 {
+        continue
+    }
+```
+
+The Kubernetes EndpointSlice conversion creates that sentinel when an EndpointSlice has no ports:
+
+- `plugin/kubernetes/object/endpoint.go:62-66`
+
+```go
+if len(ends.Ports) == 0 {
+    // Add sentinel if there are no ports.
+    e.Subsets[0].Ports = []EndpointPort{{Port: -1}}
+```
+
+This creates a built-in source-to-sink chain:
+
+1. Kubernetes EndpointSlice has ready addresses and no ports.
+2. CoreDNS `kubernetes` converts it to an endpoint with `Port: -1`.
+3. `k8s_external` with `headless` includes that service in transfer data.
+4. `k8s_external.Transfer` sends an empty SRV `[]dns.RR` batch.
+5. `transfer.ServeDNS` indexes `records[0]` and panics.
+
+Suggested remediation:
+
+1. In `plugin/transfer/transfer.go`, skip or reject empty `records` batches before indexing `records[0]`.
+2. In `plugin/k8s_external/transfer.go`, only send `recs` when `len(recs) &gt; 0` in the headless endpoint and port/protocol paths.
+3. Add regression tests covering `Port: -1` headless services and empty transfer batches.
+
+Example consumer-side guard:
+
+```go
+for records := range pchan {
+    if len(records) == 0 {
+        continue
+    }
+    if x, ok := records[0].(*dns.SOA); ok &amp;&amp; soa == nil {
+        soa = x
+    }
+    ...
+}
+```
+
+### PoC
+
+Safe local unit-level reproduction was performed. It does not contact external infrastructure and does not require a live Kubernetes cluster.
+
+#### Reproducer A: the `transfer` sink panics on an empty batch
+
+A temporary package test was added under `plugin/transfer`:
+
+```go
+package transfer
+
+import (
+    "context"
+    "fmt"
+    "testing"
+
+    "github.com/coredns/coredns/plugin/pkg/dnstest"
+    "github.com/coredns/coredns/plugin/test"
+
+    "github.com/miekg/dns"
+)
+
+type auditEmptyBatchTransferer struct{}
+
+func (auditEmptyBatchTransferer) Transfer(zone string, serial uint32) (&lt;-chan []dns.RR, error) {
+    if zone != "example.org." {
+        return nil, ErrNotAuthoritative
+    }
+    ch := make(chan []dns.RR, 3)
+    ch &lt;- []dns.RR{test.SOA(fmt.Sprintf("%s 100 IN SOA ns.dns.%s hostmaster.%s %d 7200 1800 86400 100", zone, zone, zone, 1))}
+    ch &lt;- []dns.RR{}
+    close(ch)
+    return ch, nil
+}
+
+func TestAuditEmptyTransferBatchPanics(t *testing.T) {
+    tr := &amp;Transfer{
+        Transferers: []Transferer{auditEmptyBatchTransferer{}},
+        xfrs:        []*xfr{{Zones: []string{"example.org."}, to: []string{"*"}}},
+    }
+
+    req := new(dns.Msg)
+    req.SetQuestion("example.org.", dns.TypeAXFR)
+    rec := dnstest.NewRecorder(&amp;test.ResponseWriter{TCP: true})
+
+    defer func() {
+        if rec := recover(); rec == nil {
+            t.Fatal("expected empty transfer batch to panic")
+        }
+    }()
+
+    _, _ = tr.ServeDNS(context.Background(), rec, req)
+}
+```
+
+Verification command and result:
+
+```text
+$ go test ./plugin/transfer -run TestAuditEmptyTransferBatchPanics -count=1 -v
+=== RUN   TestAuditEmptyTransferBatchPanics
+--- PASS: TestAuditEmptyTransferBatchPanics (0.00s)
+PASS
+ok  	github.com/coredns/coredns/plugin/transfer	0.005s
+```
+
+#### Reproducer B: the built-in `k8s_external` transferer emits the empty batch
+
+A temporary package test was added under `plugin/k8s_external`:
+
+```go
+package external
+
+import (
+    "testing"
+    "time"
+
+    "github.com/coredns/coredns/plugin/etcd/msg"
+    "github.com/coredns/coredns/plugin/kubernetes"
+    "github.com/coredns/coredns/request"
+
+    "github.com/miekg/dns"
+)
+
+func TestAuditHeadlessNoPortTransferEmitsEmptyBatch(t *testing.T) {
+    e := New()
+    e.Zones = []string{"example.com."}
+    e.headless = true
+    e.externalAddrFunc = func(request.Request, bool) []dns.RR { return nil }
+    e.externalSerialFunc = func(string) uint32 { return 1 }
+    e.externalServicesFunc = func(string, bool) ([]msg.Service, map[string][]msg.Service) {
+        return nil, map[string][]msg.Service{
+            "/coredns/com/example/testns/headless/" + kubernetes.Endpoint: {{Host: "192.0.2.10", Port: -1, TTL: 5, Key: "/coredns/com/example/testns/headless/endpoint-a"}},
+        }
+    }
+
+    ch, err := e.Transfer("example.com.", 0)
+    if err != nil {
+        t.Fatalf("Transfer returned error: %v", err)
+    }
+
+    deadline := time.After(time.Second)
+    for {
+        select {
+        case batch, ok := &lt;-ch:
+            if !ok {
+                t.Fatal("transfer closed before emitting an empty batch")
+            }
+            if len(batch) == 0 {
+                return
+            }
+        case &lt;-deadline:
+            t.Fatal("timed out waiting for an empty batch")
+        }
+    }
+}
+```
+
+Verification command and result:
+
+```text
+$ go test ./plugin/k8s_external -run TestAuditHeadlessNoPortTransferEmitsEmptyBatch -count=1 -v
+=== RUN   TestAuditHeadlessNoPortTransferEmitsEmptyBatch
+--- PASS: TestAuditHeadlessNoPortTransferEmitsEmptyBatch (0.00s)
+PASS
+ok  	github.com/coredns/coredns/plugin/k8s_external	0.012s
+```
+
+Additional focused verification:
+
+```text
+$ go test ./plugin/transfer ./plugin/k8s_external ./plugin/kubernetes -run 'TestAudit|^$' -count=1 -v
+ok  	github.com/coredns/coredns/plugin/transfer	0.006s
+ok  	github.com/coredns/coredns/plugin/k8s_external	0.013s
+ok  	github.com/coredns/coredns/plugin/kubernetes	0.116s
+```
+
+Affected package suites:
+
+```text
+$ go test ./plugin/transfer ./plugin/k8s_external ./plugin/kubernetes -count=1
+ok  	github.com/coredns/coredns/plugin/transfer	0.010s
+ok  	github.com/coredns/coredns/plugin/k8s_external	0.011s
+ok  	github.com/coredns/coredns/plugin/kubernetes	0.194s
+```
+
+### Impact
+
+A network client allowed to request AXFR for the affected zone can trigger a panic in CoreDNS when all prerequisites are present.
+
+Required configuration/state:
+
+```corefile
+example.com:53 {
+    kubernetes cluster.local
+    k8s_external example.com {
+        headless
+    }
+    transfer example.com {
+        to *
+    }
+}
+```
+
+Additional prerequisite:
+
+- The Kubernetes API state contains a headless-service endpoint represented by an EndpointSlice with ready addresses and no ports, producing CoreDNS `msg.Service{Port: -1}`.
+
+In normal CoreDNS mode, `core/dnsserver/server.go:267-279` recovers the panic and returns `SERVFAIL`, so this is a request-level availability issue and panic/log amplification issue. If the `debug` plugin is enabled, the server disables the recovery path and this can crash the CoreDNS process.</description>
+      <guid isPermaLink="false">GHSA-74w3-63xv-x9mv</guid>
+      <category>LOW</category>
+      <category>go:github.com/coredns/coredns</category>
+      <pubDate>Fri, 16 Oct 2026 19:26:42 +0000</pubDate>
+    </item>
     <item>
       <title>[MEDIUM] go:github.com/containerd/containerd — containerd: Unpack DoS via repeated opaque whiteouts (CVE-2026-95838)</title>
       <link>https://github.com/advisories/GHSA-rp3h-jf77-q9p4</link>
@@ -6432,48 +6692,6 @@ If you have any questions or comments about this advisory:
       <category>MEDIUM</category>
       <category>go:github.com/neuvector/neuvector</category>
       <pubDate>Thu, 28 Aug 2025 13:33:23 +0000</pubDate>
-    </item>
-    <item>
-      <title>[MEDIUM] go:github.com/neuvector/neuvector — NeuVector has an insecure password storage and is vulnerable to rainbow attack (CVE-2025-53884)</title>
-      <link>https://github.com/advisories/GHSA-8ff6-pc43-jwv3</link>
-      <description>CVE-2025-53884 · CVSS 5.3 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N) · CWE-759, CWE-916
-
-Affected:
-- go/github.com/neuvector/neuvector &lt; 0.0.0-20250825191744-da1a462074c3 (patched: 0.0.0-20250825191744-da1a462074c3)
-
----
-
-### Impact
-
-NeuVector stores user passwords and API keys using a simple, unsalted hash. This method is vulnerable to rainbow table attack (offline attack where hashes of known passwords are precomputed).
-
-NeuVector generates a cryptographically secure, random 16-character salt and uses it with the PBKDF2 algorithm to create the hash value for the following actions:
-
-- Creating a user
-- Updating a user’s password
-- Creating an API key
-
-**Note:** After upgrading to NeuVector 5.4.6, users must log in again so that NeuVector can regenerate the password hash. For API keys, you must send at least one request per API key to regenerate its hash value.
-
-### Patches
-
-This issue is fixed in NeuVector version **5.4.6** and later.
-
-### Workarounds
-
-There is no workaround. Upgrade to a patched version of NeuVector as soon as possible.
-
-### References
-
-If you have any questions or comments about this advisory:
-
-- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.
-- Open an issue in the [NeuVector](https://github.com/neuvector/neuvector/issues/new/choose) repository.
-- Verify with our [support matrix](https://www.suse.com/suse-neuvector/support-matrix/all-supported-versions/neuvector-v-all-versions/) and [product support lifecycle](https://www.suse.com/lifecycle/#suse-security).</description>
-      <guid isPermaLink="false">GHSA-8ff6-pc43-jwv3</guid>
-      <category>MEDIUM</category>
-      <category>go:github.com/neuvector/neuvector</category>
-      <pubDate>Thu, 28 Aug 2025 13:33:14 +0000</pubDate>
     </item>
   </channel>
 </rss>
