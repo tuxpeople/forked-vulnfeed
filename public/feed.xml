@@ -7,7 +7,7 @@
     <atom:link href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml" rel="self"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
-    <lastBuildDate>Mon, 19 Oct 2026 09:43:56 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 20 Oct 2026 09:17:45 +0000</lastBuildDate>
     <item>
       <title>[LOW] go:github.com/coredns/coredns — CoreDNS `k8s_external` headless AXFR can emit an empty transfer batch that panics the `transfer` plugin (CVE-2026-62994)</title>
       <link>https://github.com/advisories/GHSA-74w3-63xv-x9mv</link>
