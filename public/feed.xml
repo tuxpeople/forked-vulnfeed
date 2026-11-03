@@ -7,7 +7,53 @@
     <atom:link href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml" rel="self"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
-    <lastBuildDate>Mon, 02 Nov 2026 12:08:06 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 03 Nov 2026 11:44:11 +0000</lastBuildDate>
+    <item>
+      <title>[MEDIUM] cilium/cilium — Path traversal in CiliumNetworkPolicy L7 secret references allows local file disclosure</title>
+      <link>https://github.com/cilium/cilium/security/advisories/GHSA-p5q6-g354-mxrg</link>
+      <description>CVSS 6.8 (CVSS:3.1/AV:A/AC:L/PR:L/UI:N/S:C/C:H/I:N/A:N)
+
+Affected:
+- Cilium &gt;= v1.20.0, &lt; v1.20.2 (patched: v1.20.2)
+- Cilium &gt;= v1.19.0, &lt; v1.19.8 (patched: v1.19.8)
+- Cilium &lt; v1.18.14 (patched: v1.18.14)
+
+---
+
+### Impact&#13;
+&#13;
+Cilium HTTP L7 policies can load HTTP header values from Kubernetes Secrets.  A user who can create or modify a `CiliumNetworkPolicy` can use path traversal in a header match’s `secret.name` field if the resulting path resolves to a directory containing exactly one file readable by `cilium-agent` and the header match uses `mismatch: REPLACE`. Cilium may then read that file outside the configured certificates directory and include its contents in an HTTP header.&#13;
+&#13;
+### Patches&#13;
+&#13;
+This issue has been patched in:&#13;
+&#13;
+* Cilium v1.20.2&#13;
+* Cilium v1.19.8&#13;
+* Cilium v1.18.14&#13;
+&#13;
+This issue affects:&#13;
+* Cilium v1.20 between v1.20.0 and v1.20.1 inclusive&#13;
+* Cilium v1.19 between v1.19.0 and v1.19.7 inclusive&#13;
+* Cilium v1.18 between v1.18.0 and v1.18.13 inclusive&#13;
+* Cilium v1.17.18 and earlier.&#13;
+&#13;
+### Workarounds&#13;
+&#13;
+There is no known workaround for this issue&#13;
+&#13;
+### Acknowledgements&#13;
+&#13;
+Special thanks to @AdamKorcz for reporting this issue, and to @thorn3r for their assistance in preparing the fix.&#13;
+&#13;
+### For more information&#13;
+&#13;
+If you think you have found a vulnerability affecting Cilium, we strongly encourage you to report it to our security mailing list at [security@cilium.io](mailto:security@cilium.io). This is a private mailing list for the Cilium security team, and your report will be treated as top priority.</description>
+      <guid isPermaLink="false">GHSA-p5q6-g354-mxrg</guid>
+      <category>MEDIUM</category>
+      <category>cilium/cilium</category>
+      <pubDate>Tue, 03 Nov 2026 10:51:16 +0000</pubDate>
+    </item>
     <item>
       <title>[HIGH] rancher/rancher — Rancher credentials disclosed to third-party hosts by the Rancher Manager meta proxy (CVE-2026-88811)</title>
       <link>https://github.com/rancher/rancher/security/advisories/GHSA-x82x-2qj6-5rm2</link>
@@ -7000,58 +7046,6 @@ If you have any questions or comments about this advisory:
       <category>HIGH</category>
       <category>go:github.com/rancher/rancher</category>
       <pubDate>Fri, 26 Sep 2025 13:02:55 +0000</pubDate>
-    </item>
-    <item>
-      <title>[HIGH] go:github.com/rancher/rancher — Rancher CLI SAML authentication is vulnerable to phishing attacks (CVE-2024-58267)</title>
-      <link>https://github.com/advisories/GHSA-v3vj-5868-2ch2</link>
-      <description>CVE-2024-58267 · CVSS 8.0 (CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:C/C:H/I:H/A:H) · CWE-345
-
-Affected:
-- go/github.com/rancher/rancher &gt;= 2.12.0, &lt; 2.12.2 (patched: 2.12.2)
-- go/github.com/rancher/rancher &gt;= 2.11.0, &lt; 2.11.6 (patched: 2.11.6)
-- go/github.com/rancher/rancher &gt;= 2.10.0, &lt; 2.10.10 (patched: 2.10.10)
-- go/github.com/rancher/rancher &gt;= 2.9.0, &lt; 2.9.12 (patched: 2.9.12)
-
----
-
-### Impact
-
-A vulnerability has been identified within Rancher Manager whereby the SAML authentication from the Rancher CLI  tool is vulnerable to phishing attacks. The custom authentication protocol for SAML-based providers can be abused to steal Rancher’s authentication tokens.
-
-Rancher Manager deployments without SAML authentication enabled are not affected by this vulnerability.
-
-An attacker can generate a phishing SAML login URL which contains a `publicKey` and `requestId` controlled by the attacker. The attacker can then give the link to another user (eg: admin) and if the victim goes to the link unsuspectingly, they might not notice the bad parameters in the URL. The user will be prompted to login and might believe that its session has ended so they need to re-login. By clicking on the link, they will be logged in and an encrypted token will be created with the attacker's public key. The attacker can then decrypt the victim’s Rancher token, enabling the attack
-
-Please consult the associated [MITRE ATTACK Techniques - Privilege Escalation](https://attack.mitre.org/tactics/TA0004/) for further information about this category of attack.
-
-### Patches
-
-This vulnerability is addressed by changes in both Rancher Manager and the CLI. The fixed versions:
-
-1. The Rancher CLI now reports the `requestId` that is relevant to the authentication session in process as a separate message to the terminal, making it easier for the user to identify and compare.
-2. The Rancher login page for SAML authentication will display a suitable warning to ensure that the user seeing the login page is aware of the login process with the related `requestId`, enabling users to verify whether the request was intended or not.
-
-Patched versions of Rancher include releases v2.12.2, v2.11.6, v2.10.10, and v2.9.12.
-
-### Workarounds
-
-If you cannot update to one of the fixed versions, make sure to check the URL printed by the Rancher CLI when performing a SAML authentication flow, especially the `requestId` parameter. The URL and the `requestId` printed by the CLI must be the same URL that you access and see when finalizing the SAML authentication flow in your browser for the Rancher UI. The URL has the format:
-
--  `&lt;rancher_ui_address&gt;/dashboard/auth/login?requestId=&lt;requestid&gt;&amp;publicKey=&lt;pubkey&gt;&amp;responseType=&lt;responsetype&gt;` 
-
-If the URL presented in the browser is different from the one logged by the CLI, the user must not proceed with the login, as they might be under a phishing attack.
-
-### References
-
-If you have any questions or comments about this advisory:
-
-- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.
-- Open an issue in the [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.
-- Verify with our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support lifecycle](https://www.suse.com/lifecycle/).</description>
-      <guid isPermaLink="false">GHSA-v3vj-5868-2ch2</guid>
-      <category>HIGH</category>
-      <category>go:github.com/rancher/rancher</category>
-      <pubDate>Fri, 26 Sep 2025 13:02:44 +0000</pubDate>
     </item>
   </channel>
 </rss>
