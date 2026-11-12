@@ -7,7 +7,148 @@
     <atom:link href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml" rel="self"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
-    <lastBuildDate>Wed, 11 Nov 2026 11:44:41 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 12 Nov 2026 12:22:10 +0000</lastBuildDate>
+    <item>
+      <title>[HIGH] opencontainers/runc — malicious image can bind-mount an arbitrary host directory into a container across checkpoint/restore (CVE-2026-119101)</title>
+      <link>https://github.com/opencontainers/runc/security/advisories/GHSA-g2c3-j8g3-7gpw</link>
+      <description>CVE-2026-119101 · CVSS 7.9 (CVSS:3.1/AV:L/AC:L/PR:L/UI:R/S:C/C:H/I:H/A:N) · CWE-74
+
+Affected:
+- go/github.com/opencontainers/runc &gt;= 1.1.0-rc.1, &lt; 1.3.7 (patched: 1.3.7)
+- go/github.com/opencontainers/runc &gt;= 1.4.0-rc.1, &lt; 1.4.4 (patched: 1.4.4)
+- go/github.com/opencontainers/runc &gt;= 1.5.0-rc.1, &lt; 1.5.3 (patched: 1.5.3)
+- go/github.com/opencontainers/runc &gt;= 1.6.0-rc.1, &lt; 1.6.0-rc.2 (patched: 1.6.0-rc.2)
+
+---
+
+### Summary
+
+When a container is checkpointed and restored with CRIU, runc registers
+every bind mount (and every device) of the container configuration with
+CRIU as an external mount, using the mount destination resolved inside
+the container's own rootfs as the lookup key. CRIU encodes each external
+mount as the single string `mnt[KEY]:VAL` and looks entries up by prefix,
+so a key that contains `]:` terminates early and shifts the boundary
+between the key and the value. A malicious image can therefore place
+`]:` in a symlink target in its rootfs and make `runc restore`, running
+as host root, bind-mount a host path that the configuration never named
+into the restored container, read-write.
+
+This is the same issue as CVE-2026-115520 ([GHSA-2mxx-58qc-p466)](https://github.com/containers/crun/security/advisories/GHSA-2mxx-58qc-p466) in crun.
+
+Affected since runc 1.1.0, which added the symlink resolution of mount
+destinations for checkpoint/restore (commit 74ae9e0f, "checkpoint:
+resolve symlink for external bind mount"). Exploitation requires an
+operator who runs `runc checkpoint` followed by `runc restore` on the
+container (directly, or via a container engine such as containerd,
+CRI-O or Podman). Since CRIU requires root, so do runc checkpoint and
+restore.
+
+### Details
+
+`addCriuDumpMount` and `addCriuRestoreMount` in
+`libcontainer/criu_linux.go` compute the key as
+
+```go
+mountDest := m.Destination
+if dest, err := securejoin.SecureJoin(c.config.Rootfs, mountDest); err == nil {
+	mountDest = dest[len(c.config.Rootfs):]
+}
+```
+
+`SecureJoin` expands the destination's symlinks inside the container
+rootfs, which the container controls, keeps any nonexistent trailing
+components verbatim, and the result is passed to CRIU unchecked.
+CRIU stores the pair as `mnt[KEY]:VAL` and looks entries up by prefix,
+so everything after the first `]:` in KEY becomes the beginning of VAL,
+which is the host path CRIU bind-mounts on restore.
+
+The container does not need to replace a mount point, only to rename
+its parent: for example, `/etc` is not a mount point, so the container
+can rename `/etc` to `/e` and recreate `/etc` with symlinks of its
+choosing. One symlink provides the key recorded in the checkpoint image,
+another one re-splits that key on restore so that the value becomes a
+path under the rootfs, which in turn is a symlink to the host directory
+of the attacker's choice. CRIU resolves this path in the host mount
+namespace and bind-mounts it into the container. See
+GHSA-2mxx-58qc-p466 for a detailed walkthrough, which applies to runc
+as is.
+
+With CRIU's default mount engine, the final component of the host path
+is still the base name of one of the container's own bind sources, while
+the directory part is entirely attacker-chosen. With the older engine
+(`mntns-compat-mode`), this restriction does not apply.
+
+An empty key (the destination resolves to the rootfs itself) is a second
+instance of the same problem: CRIU reads `mnt[]` as a request to
+autodetect external mounts.
+
+Unlike crun, runc also registers the container's devices with CRIU this
+way (`Destination: node.Path`), and their keys are resolved in the
+rootfs too. The masked paths are passed as is, from the configuration,
+and are not affected.
+
+### Proof of concept
+
+The integration test added by the fix ("checkpoint and restore (bind
+mount, destination resolves to invalid CRIU key)" in
+`tests/integration/checkpoint.bats`) demonstrates the root cause: with
+an unpatched runc, after the parent directory of a bind mount
+destination is replaced, the resolved key containing `]:` is passed to
+CRIU and `runc checkpoint` succeeds.
+
+An end-to-end reproduction, in which the restored container gets a host
+directory bind-mounted into it, is described in GHSA-2mxx-58qc-p466 for
+crun. The same steps apply to runc, since both runtimes build the CRIU
+keys the same way; an end-to-end run against runc has not been done
+separately.
+
+
+### Impact
+
+A malicious image (or a compromised process running as root inside the
+container) can, when the container is checkpointed and later restored,
+make runc running as host root expose a host directory chosen by the
+attacker inside the restored container, read-write. This breaks the
+isolation between the container and the host, and may lead to
+disclosure or modification of host files, and potentially to a full
+host compromise.
+
+Only users who both checkpoint and restore containers running untrusted
+images are affected. Containers that are never restored are not
+affected; in particular, checkpointing alone (such as the Kubernetes
+forensic container checkpointing feature) does not trigger the issue,
+unless the checkpoint is later restored. The default CRIU mount engine
+limits which host paths can be reached (see Details); with
+`mntns-compat-mode`, any host path can be reached.
+
+### Patches
+
+Fixed in runc 1.3.7, 1.4.4, 1.5.3, and 1.6.0-rc.2, which refuse CRIU
+external mount keys that are empty or contain `]:`.
+
+### Workarounds
+
+- Upgrade CRIU to 4.3.1 or later, which fixes the issue on the CRIU side
+  ([GHSA-7ww7-53q2-wrwx](https://github.com/checkpoint-restore/criu/security/advisories/GHSA-7ww7-53q2-wrwx),
+  CVE-2026-119614) and thus also protects older runc versions.
+- Do not restore checkpoints of containers running untrusted images.
+
+### Credits
+
+Giuseppe Scrivano (@giuseppe) submitted crun to [Anthropic's OSS Scanner](https://github.com/anthropics/oss-scanner), which found the issue. The root cause is in CRIU, while runc and crun now refuse such mount keys, so they are protected even with an unpatched CRIU.
+
+
+
+
+
+
+</description>
+      <guid isPermaLink="false">GHSA-g2c3-j8g3-7gpw</guid>
+      <category>HIGH</category>
+      <category>opencontainers/runc</category>
+      <pubDate>Thu, 12 Nov 2026 09:34:20 +0000</pubDate>
+    </item>
     <item>
       <title>[MEDIUM] cilium/cilium — Path traversal in CiliumNetworkPolicy L7 secret references allows local file disclosure</title>
       <link>https://github.com/cilium/cilium/security/advisories/GHSA-p5q6-g354-mxrg</link>
@@ -6998,54 +7139,6 @@ If you have any questions or comments about this advisory:
       <category>CRITICAL</category>
       <category>go:github.com/neuvector/neuvector</category>
       <pubDate>Tue, 21 Oct 2025 20:25:11 +0000</pubDate>
-    </item>
-    <item>
-      <title>[HIGH] go:github.com/rancher/rancher — Rancher update on users can deny the service to the admin (CVE-2024-58260)</title>
-      <link>https://github.com/advisories/GHSA-q82v-h4rq-5c86</link>
-      <description>CVE-2024-58260 · CVSS 7.6 (CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:C/C:N/I:L/A:H) · CWE-863
-
-Affected:
-- go/github.com/rancher/rancher &gt;= 2.12.0, &lt; 2.12.2 (patched: 2.12.2)
-- go/github.com/rancher/rancher &gt;= 2.11.0, &lt; 2.11.6 (patched: 2.11.6)
-- go/github.com/rancher/rancher &gt;= 2.10.0, &lt; 2.10.10 (patched: 2.10.10)
-- go/github.com/rancher/rancher &gt;= 2.9.0, &lt; 2.9.12 (patched: 2.9.12)
-
----
-
-### Impact
-
-A vulnerability has been identified within Rancher Manager where a missing server-side validation on the `.username` field in Rancher can allow users with update permissions on other User resources to cause denial of access for targeted accounts. Specifically:
-
-- Username takeover: A user with permission to update another user’s resource can set its `.username` to "admin", preventing both the legitimate admin and the affected user from logging in, as Rancher enforces uniqueness at login time.
-- Account lockout: A user with update permissions on the admin account can change the admin’s username, effectively blocking administrative access to the Rancher UI.
-
-This issue enables a malicious or compromised account with elevated update privileges on User resources to disrupt platform administration and user authentication.
-
-**Note:** The users with these permissions to modify accounts and resources are considered as privileged users. For more information, please consult Rancher Manger’s documentation about [global permissions](https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/authentication-permissions-and-global-configuration/manage-role-based-access-control-rbac/global-permissions).
-
-Please consult the associated  [MITRE ATT&amp;CK - Technique - Account Access Removal](https://attack.mitre.org/techniques/T1531/) for further information about this category of attack.
-
-### Patches
-
-This vulnerability is addressed by adding a new check in the webhook which blocks modifying usernames after it has been set. If it's empty then the username can be set to a username not already in use, but after that it is immutable.
-
-Patched versions of Rancher include releases v2.12.2, v2.11.6, v2.10.10 and v2.9.12.
-
-### Workarounds
-
-If you can't upgrade to a fixed version, please make sure that you are only granting update permissions on users’ related resources to trusted users.
-
-### References
-
-If you have any questions or comments about this advisory:
-
-- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.
-- Open an issue in the [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.
-- Verify with our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support lifecycle](https://www.suse.com/lifecycle/).</description>
-      <guid isPermaLink="false">GHSA-q82v-h4rq-5c86</guid>
-      <category>HIGH</category>
-      <category>go:github.com/rancher/rancher</category>
-      <pubDate>Fri, 26 Sep 2025 13:02:55 +0000</pubDate>
     </item>
   </channel>
 </rss>
