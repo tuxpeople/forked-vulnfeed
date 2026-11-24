@@ -7,7 +7,7 @@
     <atom:link href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml" rel="self"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
-    <lastBuildDate>Mon, 23 Nov 2026 14:12:49 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 14:40:13 +0000</lastBuildDate>
     <item>
       <title>[HIGH] go:github.com/containerd/containerd/v2 — containerd image-triggered daemon crash via malformed digest in subject-annotated descriptor (CVE-2026-95839)</title>
       <link>https://github.com/advisories/GHSA-vwhp-8p66-mq4f</link>
