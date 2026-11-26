@@ -7,7 +7,82 @@
     <atom:link href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml" rel="self"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
-    <lastBuildDate>Wed, 25 Nov 2026 14:00:32 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 13:40:01 +0000</lastBuildDate>
+    <item>
+      <title>[HIGH] rancher/fleet — Fleet copies Secrets and ConfigMaps that a tenant cannot read to downstream clusters through Bundle downstreamResources (CVE-2026-104616)</title>
+      <link>https://github.com/rancher/fleet/security/advisories/GHSA-v78r-6474-h7fm</link>
+      <description>CVE-2026-104616 · CVSS 8.3 (CVSS:4.0/AV:N/AC:L/AT:N/PR:L/UI:N/VC:H/VI:N/VA:N/SC:H/SI:N/SA:N) · CWE-668, CWE-862
+
+Affected:
+- go/github.com/rancher/fleet &gt;=v0.16.0, &lt;=v0.16.3 (patched: v0.16.4)
+- go/github.com/rancher/fleet &gt;=v0.15.0, &lt;=v0.15.8, only when `EXPERIMENTAL_COPY_RESOURCES_DOWNSTREAM` is enabled (patched: v0.15.9)
+- go/github.com/rancher/fleet &gt;=v0.14.0, &lt;=v0.14.12, only when `EXPERIMENTAL_COPY_RESOURCES_DOWNSTREAM` is enabled (patched: v0.14.13)
+- go/github.com/rancher/fleet v0.17.0 pre-releases, up to v0.17.0-rc.1 (patched: v0.17.0)
+
+---
+
+### Impact&#13;
+&#13;
+A vulnerability exists in Fleet where Secrets and ConfigMaps listed in a Bundle's `downstreamResources` were copied to downstream clusters. Fleet did not check whether the tenant behind the Bundle may use them.&#13;
+&#13;
+Fleet copies the Secrets and ConfigMaps listed in `downstreamResources`. It copies them from the Bundle's namespace on the management cluster to the deployment's target namespace. This happens on every downstream cluster the Bundle targets. The Fleet controller reads those objects with its own credentials. On affected versions, it copied any object in the namespace that the Bundle named.&#13;
+&#13;
+A tenant might be able to create a Bundle, GitRepo, or HelmOp in a Fleet namespace without being able to read Secrets there. This issue enables the tenant to obtain the content of any Secret or ConfigMap in that namespace. The tenant achieves this by having the objects copied to a downstream cluster namespace where their own workloads run. The documented tenant setup grants tenants no access to Secrets in their namespace. However, the operator stores the tenant's Git, Helm, and OCI registry credentials there. The impact extends to the systems those credentials protect. The field can be set directly on a Bundle, in the `fleet.yaml` of a GitRepo, and on a HelmOp. Allowing tenants only GitRepo or HelmOp resources does not reduce exposure.&#13;
+&#13;
+On versions before v0.16.2, v0.15.7, and v0.14.11, the copy was written to the downstream cluster with the Fleet agent's credentials. This behavior is covered separately by CVE-2026-88808.&#13;
+&#13;
+#### Preconditions&#13;
+&#13;
+- The issue affects multi-tenant installations. In these installations, tenants are separated by RBAC on the management cluster and by a Fleet `Policy`. This policy sets `requireServiceAccount` and pins their deployments to least privilege ServiceAccounts. In an operator-only installation, everyone who can create Fleet resources is trusted with the Fleet agent's privileges. Therefore, there is no boundary to cross.&#13;
+- Fleet v0.16 (Rancher v2.15) is affected in a default installation. On Fleet v0.14 and v0.15 (Rancher v2.13 and v2.14), `downstreamResources` is behind `EXPERIMENTAL_COPY_RESOURCES_DOWNSTREAM`. This flag is disabled by default, so only installations that enabled it are affected.&#13;
+- Standalone Fleet and Fleet in Rancher are affected alike. Rancher adds no protection for this path.&#13;
+&#13;
+Customers who run Fleet in a multi-tenant environment and cannot rule out exposure must review the copied Secrets and ConfigMaps on downstream clusters. These objects carry the label `fleet.cattle.io/bundledeployment`. This label names the Bundle deployment that wrote them. For example, run `kubectl get secrets,configmaps -A -l fleet.cattle.io/bundledeployment`. Delete copies that should not be there and rotate any exposed credentials. Upgrading does not remove copies made before the upgrade.&#13;
+&#13;
+### Patches&#13;
+&#13;
+A new `Policy` field, `allowedDownstreamResources`, addresses this vulnerability. This field lists the Secrets and ConfigMaps that may be copied to downstream clusters. Each entry sets a kind (`Secret` or `ConfigMap`) and either a `name` or an anchored `namePattern`. Fleet combines the entries of all Policies in a namespace. In a namespace where a `Policy` sets `requireServiceAccount: true`, Fleet only copies matching objects. With no entries, it copies nothing. Fleet enforces a non-empty list even without `requireServiceAccount`. Namespaces without `requireServiceAccount` and without entries remain unchanged. This preserves the behavior of operator-only installations.&#13;
+&#13;
+The check uses only the kind and the name and does not read the objects. Therefore, a refusal does not reveal whether an object exists. Fleet rechecks every Bundle in a namespace when a `Policy` is created, changed, or deleted. A refused Bundle reports "not ready" with a message naming the unlisted object. Its existing deployments and copies stay in place, but they are no longer updated.&#13;
+&#13;
+After upgrading, Bundles referencing Secrets or ConfigMaps in `downstreamResources` are refused if the namespace `Policy` sets `requireServiceAccount: true`. They are refused until every referenced object is listed in `allowedDownstreamResources`. List an object only if its content may be visible to whoever deploys from that namespace. The field only exists once the `fleet-crd` chart is upgraded. With standalone Fleet, upgrade `fleet-crd`, add the entries, and then upgrade `fleet`. In Rancher, both charts are upgraded together. Add the entries directly after the upgrade. Until then, the affected Bundles are refused, but nothing deployed is removed.&#13;
+&#13;
+On Fleet v0.15 and v0.14, the check only runs when `EXPERIMENTAL_COPY_RESOURCES_DOWNSTREAM` is enabled. Nothing is copied otherwise.&#13;
+&#13;
+Patched versions of Fleet include releases v0.17.0, v0.16.4, v0.15.9, and v0.14.13.&#13;
+&#13;
+Patched versions of Rancher include releases v2.16.0, v2.15.4, v2.14.8, and v2.13.12. Rancher v2.12 and earlier ship Fleet v0.13 or earlier and are unaffected.&#13;
+&#13;
+### Workarounds&#13;
+&#13;
+Users who cannot upgrade immediately can reduce exposure with the following workarounds:&#13;
+&#13;
+- On Rancher v2.13 and v2.14, and on standalone Fleet v0.14 and v0.15, leave `EXPERIMENTAL_COPY_RESOURCES_DOWNSTREAM` unset or set to false. While disabled, Fleet copies nothing, which fully mitigates the issue on these versions.&#13;
+- On all affected releases, remove Secrets and ConfigMaps from namespaces where tenants create Fleet resources, unless the tenant is allowed to see them. Move other objects elsewhere and rotate any potentially exposed credentials.&#13;
+- Alternatively, use an admission policy to reject Bundles that set `spec.downstreamResources` or `spec.targets[].downstreamResources` in tenant namespaces. For example, use Kyverno or OPA Gatekeeper. Fleet creates the Bundles for GitRepos and HelmOps through the Kubernetes API. Therefore, such a policy covers those resources as well.&#13;
+&#13;
+### References&#13;
+&#13;
+- [rancher/fleet#6099](https://github.com/rancher/fleet/pull/6099) (main)&#13;
+- [rancher/fleet#6100](https://github.com/rancher/fleet/pull/6100) (release/v0.17)&#13;
+- [rancher/fleet#6101](https://github.com/rancher/fleet/pull/6101) (release/v0.16)&#13;
+- [rancher/fleet#6102](https://github.com/rancher/fleet/pull/6102) (release/v0.15)&#13;
+- [rancher/fleet#6103](https://github.com/rancher/fleet/pull/6103) (release/v0.14)&#13;
+- [CWE-862: Missing Authorization](https://cwe.mitre.org/data/definitions/862.html)&#13;
+- [CWE-668: Exposure of Resource to Wrong Sphere](https://cwe.mitre.org/data/definitions/668.html)&#13;
+&#13;
+### For more information&#13;
+&#13;
+If you have any questions or comments about this advisory:&#13;
+&#13;
+- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.&#13;
+- Open an issue in the [Rancher](https://github.com/rancher/rancher/issues/new/choose) repository.&#13;
+- Verify our [support matrix](https://www.suse.com/suse-rancher/support-matrix/all-supported-versions/) and [product support life cycle](https://www.suse.com/lifecycle/).</description>
+      <guid isPermaLink="false">GHSA-v78r-6474-h7fm</guid>
+      <category>HIGH</category>
+      <category>rancher/fleet</category>
+      <pubDate>Wed, 25 Nov 2026 22:06:42 +0000</pubDate>
+    </item>
     <item>
       <title>[HIGH] go:github.com/containerd/containerd/v2 — containerd image-triggered daemon crash via malformed digest in subject-annotated descriptor (CVE-2026-95839)</title>
       <link>https://github.com/advisories/GHSA-vwhp-8p66-mq4f</link>
@@ -7101,46 +7176,6 @@ If you have any questions or comments about this advisory:
       <category>HIGH</category>
       <category>go:github.com/neuvector/neuvector</category>
       <pubDate>Tue, 21 Oct 2025 20:25:21 +0000</pubDate>
-    </item>
-    <item>
-      <title>[CRITICAL] go:github.com/neuvector/neuvector — NeuVector Enforcer is vulnerable to Command Injection and Buffer overflow (CVE-2025-54469)</title>
-      <link>https://github.com/advisories/GHSA-c8g6-qrwh-m3vp</link>
-      <description>CVE-2025-54469 · CVSS 9.9 (CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H) · CWE-77, CWE-78, CWE-120
-
-Affected:
-- go/github.com/neuvector/neuvector &gt;= 5.3.0, &lt; 5.3.5 (patched: 5.3.5)
-- go/github.com/neuvector/neuvector &gt;= 5.4.0, &lt;= 5.4.6 (patched: 5.4.7)
-- go/github.com/neuvector/neuvector &gt;= 0.0.0-20230727023453-1c4957d53911, &lt; 0.0.0-20251020133207-084a437033b4 (patched: 0.0.0-20251020133207-084a437033b4)
-
----
-
-### Impact
-A vulnerability was identified in NeuVector, where the enforcer used environment variables `CLUSTER_RPC_PORT` and `CLUSTER_LAN_PORT` to generate a command to be executed via `popen`, without first sanitising their values.
-
-The entry process of the enforcer container is the monitor process. When the enforcer container stops, the monitor process checks whether the consul subprocess has exited. To perform this check, the monitor process uses the `popen` function to execute a shell command that determines whether the ports used by the consul subprocess are still active.
-
-The values of environment variables `CLUSTER_RPC_PORT` and `CLUSTER_LAN_PORT` are used directly to compose shell commands via popen without validation or sanitization.  This behavior could allow a malicious user to inject malicious commands through these variables within the enforcer container.
-
-In the patched version, the monitor process validates the values of `CLUSTER_RPC_PORT` and `CLUSTER_LAN_PORT` to ensure they contain only valid port numbers before invoking the `popen` command.
-
-If validation fails, the monitor process exits immediately, causing the enforcer container to terminate. This prevents the execution of any injected or malicious commands.
-
-
-### Patches
-Patched versions include release `v5.4.7` and above.
-
-### Workarounds
-There is no workaround for this issue. Users are recommended to upgrade, as soon as possible, to a version of NeuVector that contains the fix.
-
-### References
-If you have any questions or comments about this advisory:
-- Reach out to the [SUSE Rancher Security team](https://github.com/rancher/rancher/security/policy) for security related inquiries.
-- Open an issue in the [NeuVector](https://github.com/neuvector/neuvector/issues/new/choose) repository.
-- Verify with our [support matrix](https://www.suse.com/suse-neuvector/support-matrix/all-supported-versions/neuvector-v-all-versions/) and [product support lifecycle](https://www.suse.com/lifecycle/#suse-security).</description>
-      <guid isPermaLink="false">GHSA-c8g6-qrwh-m3vp</guid>
-      <category>CRITICAL</category>
-      <category>go:github.com/neuvector/neuvector</category>
-      <pubDate>Tue, 21 Oct 2025 20:25:11 +0000</pubDate>
     </item>
   </channel>
 </rss>
