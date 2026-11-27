@@ -7,7 +7,7 @@
     <atom:link href="https://tuxpeople.github.io/forked-vulnfeed/feed.xml" rel="self"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
-    <lastBuildDate>Thu, 26 Nov 2026 13:40:01 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 27 Nov 2026 13:36:26 +0000</lastBuildDate>
     <item>
       <title>[HIGH] rancher/fleet — Fleet copies Secrets and ConfigMaps that a tenant cannot read to downstream clusters through Bundle downstreamResources (CVE-2026-104616)</title>
       <link>https://github.com/rancher/fleet/security/advisories/GHSA-v78r-6474-h7fm</link>
